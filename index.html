@@ -106,18 +106,23 @@
         <div class="text-col">
             <h2>Start Your Order.</h2>
             <p>Tell us what you need and your budget. We'll handle the rest.</p>
-            <p style="font-size: 0.9rem; margin-top: 10px;"><span style="color: red;">*</span> Fields are mandatory.</p>
+            <p style="font-size: 0.9rem; margin-top: 10px;"><span style="color: red;">*</span> Mandatory fields.</p>
             
             <form action="https://formsubmit.co/brosigma863@gmail.com" method="POST">
                <input type="hidden" name="_next" value="https://logix-site.vercel.app/success.html">
                 <input type="hidden" name="_subject" value="New Order from Logix Website">
                 
-                <textarea name="Project" placeholder="Describe your custom gadget idea... *" rows="3" required></textarea>
+                <div style="margin-top: 2rem;">
+                    <label>Describe your custom gadget idea <span style="color: red;">*</span></label>
+                    <textarea name="Project" placeholder="E.g., Smart fridge sensor..." rows="3" required></textarea>
+                </div>
                 
                 <!-- Contact Section -->
-                <div style="margin-top: 1rem;">
-                    <input type="email" name="Email" placeholder="Email Address (Optional)" style="width: 100%; border: none; border-bottom: 2px solid #000; padding: 10px; outline: none; background: transparent; margin-bottom: 10px;">
+                <div style="margin-top: 1.5rem;">
+                    <label>Email Address (Optional)</label>
+                    <input type="email" name="Email" placeholder="you@example.com" style="width: 100%; border: none; border-bottom: 2px solid #000; padding: 10px; outline: none; background: transparent; margin-bottom: 15px;">
                     
+                    <label>Phone Number <span style="color: red;">*</span></label>
                     <div style="display: flex; gap: 10px;">
                         <select name="CountryCode" style="padding: 10px; border: 2px solid #000; background: transparent;">
                             <option value="+91">IN (+91)</option>
@@ -126,13 +131,16 @@
                             <option value="+61">AU (+61)</option>
                             <option value="+971">UAE (+971)</option>
                         </select>
-                        <input type="tel" name="Phone" placeholder="Phone Number *" style="width: 100%; border: none; border-bottom: 2px solid #000; padding: 10px; outline: none; background: transparent;" required>
+                        <input type="tel" name="Phone" placeholder="12345 67890" style="width: 100%; border: none; border-bottom: 2px solid #000; padding: 10px; outline: none; background: transparent;" required>
                     </div>
                 </div>
 
-                <div style="display: flex; align-items: center; border-bottom: 2px solid #000; padding: 1rem 0;">
-                    <span style="font-size: 1.2rem; font-weight: bold; margin-right: 10px;">₹ *</span>
-                    <input type="number" name="Budget" placeholder="Enter your budget" style="width: 100%; border: none; font-size: 1.2rem; outline: none; background: transparent;" required>
+                <div style="margin-top: 1.5rem;">
+                    <label>Budget (INR) <span style="color: red;">*</span></label>
+                    <div style="display: flex; align-items: center; border-bottom: 2px solid #000; padding: 10px 0;">
+                        <span style="font-size: 1.2rem; font-weight: bold; margin-right: 10px;">₹</span>
+                        <input type="number" name="Budget" placeholder="Enter amount" style="width: 100%; border: none; font-size: 1.2rem; outline: none; background: transparent;" required>
+                    </div>
                 </div>
 
                 <button type="submit">SUBMIT REQUEST</button>
