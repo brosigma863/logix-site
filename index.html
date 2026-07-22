@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta name="google-site-verification" content="xUwpUl8ylEIjA0WvUnoy4jF85AaYAl1ppadgozvvUK8" />
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LOGIX | Custom Gadgets for All</title>
@@ -41,10 +42,6 @@
         button { background: #000; color: #fff; padding: 2rem 4rem; font-size: 1.2rem; font-weight: bold; cursor: pointer; border: none; margin-top: 3rem; transition: background 0.3s; }
         button:hover { background: #333; }
 
-        /* Gallery Styling */
-        .gallery-container { display: flex; overflow-x: auto; gap: 20px; padding: 20px 0; -webkit-overflow-scrolling: touch; margin-top: 2rem; }
-        .gallery-container img { width: 300px; height: 200px; object-fit: cover; border-radius: 10px; flex-shrink: 0; }
-
         /* Offer Banner */
         .offer { background: #000; color: #fff; padding: 5rem 10%; text-align: center; }
         .offer h3 { font-size: 2.5rem; font-family: 'Playfair Display', serif; }
@@ -65,16 +62,16 @@
 </head>
 <body>
 
-   <nav>
+    <nav>
+    <!-- We added display: flex to align the logo and text side-by-side -->
     <div style="display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 1.5rem;">
-        <img src="logo.png" style="height: 30px;">
+        <img src="logo.png" alt="Logix Logo" style="height: 30px;">
         LOGIX
     </div>
-   
+    
     <div class="nav-links">
         <a href="#about">About</a>
         <a href="#work">Gadgets</a>
-        <a href="#ideas">Ideas</a>
         <a href="#order">Order</a>
     </div>
 </nav>
@@ -102,55 +99,22 @@
         </div>
     </section>
 
-    <!-- Ideas Section moved above Order Section -->
-    <section id="ideas" style="padding: 8rem 10%;">
-        <h2>Ideas</h2>
-        <div class="gallery-container">
-            <img src="gadget1.jpg" alt="Sample 1">
-            <img src="gadget2.jpg" alt="Sample 2">
-            <img src="gadget3.jpg" alt="Sample 3">
-        </div>
-    </section>
-
     <section id="order" class="content-section" style="border:none;">
         <div class="img-col"><img src="order.jpg" alt="Order Request"></div>
+        <!-- FIXED: Added text-col wrapper here -->
         <div class="text-col">
             <h2>Start Your Order.</h2>
             <p>Tell us what you need and your budget. We'll handle the rest.</p>
-            <p style="font-size: 0.9rem; margin-top: 10px;"><span style="color: red;">*</span> Mandatory fields.</p>
             
             <form action="https://formsubmit.co/brosigma863@gmail.com" method="POST">
-               <input type="hidden" name="_next" value="https://logix-site.vercel.app/success.html">
+                <input type="hidden" name="_next" value="success.html">
                 <input type="hidden" name="_subject" value="New Order from Logix Website">
                 
-                <div style="margin-top: 2rem;">
-                    <label>Describe your custom gadget idea <span style="color: red;">*</span></label>
-                    <textarea name="Project" placeholder="E.g., Smart fridge sensor..." rows="3" required></textarea>
-                </div>
+                <textarea name="Project" placeholder="Describe your custom gadget idea..." rows="3" required></textarea>
                 
-                <div style="margin-top: 1.5rem;">
-                    <label>Email Address (Optional)</label>
-                    <input type="email" name="Email" placeholder="you@example.com" style="width: 100%; border: none; border-bottom: 2px solid #000; padding: 10px; outline: none; background: transparent; margin-bottom: 15px;">
-                    
-                    <label>Phone Number <span style="color: red;">*</span></label>
-                    <div style="display: flex; gap: 10px;">
-                        <select name="CountryCode" style="padding: 10px; border: 2px solid #000; background: transparent;">
-                            <option value="+91">IN (+91)</option>
-                            <option value="+1">US (+1)</option>
-                            <option value="+44">UK (+44)</option>
-                            <option value="+61">AU (+61)</option>
-                            <option value="+971">UAE (+971)</option>
-                        </select>
-                        <input type="tel" name="Phone" placeholder="12345 67890" style="width: 100%; border: none; border-bottom: 2px solid #000; padding: 10px; outline: none; background: transparent;" required>
-                    </div>
-                </div>
-
-                <div style="margin-top: 1.5rem;">
-                    <label>Budget (INR) <span style="color: red;">*</span></label>
-                    <div style="display: flex; align-items: center; border-bottom: 2px solid #000; padding: 10px 0;">
-                        <span style="font-size: 1.2rem; font-weight: bold; margin-right: 10px;">₹</span>
-                        <input type="number" name="Budget" placeholder="Enter amount" style="width: 100%; border: none; font-size: 1.2rem; outline: none; background: transparent;" required>
-                    </div>
+                <div style="display: flex; align-items: center; border-bottom: 2px solid #000; padding: 1rem 0;">
+                    <span style="font-size: 1.2rem; font-weight: bold; margin-right: 10px;">₹</span>
+                    <input type="number" name="Budget" placeholder="Enter your budget" style="width: 100%; border: none; font-size: 1.2rem; outline: none; background: transparent;" required>
                 </div>
 
                 <button type="submit">SUBMIT REQUEST</button>
