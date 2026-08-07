@@ -1,133 +1,850 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta name="google-site-verification" content="xUwpUl8ylEIjA0WvUnoy4jF85AaYAl1ppadgozvvUK8" />
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LOGIX - Custom Gadgets & Electronics</title>
-    <meta name="description" content="LOGIX builds custom gadgets, hardware systems, and DIY electronics accessible to all.">
+    <title>LOGIX | Custom Gadgets for All</title>
+    
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="favicon.png">
     
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
     
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                    },
+                    colors: {
+                        'logix-blue': '#005b9f', // Derived from the logo
+                        'logix-accent': '#00e5ff',
+                    }
+                }
+            }
+        }
+    </script>
+
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        :root { --main: #000; --bg: #fff; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--main); line-height: 1.5; }
+        /* Custom scrollbar for gallery */
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
 
-        /* Navigation Bar */
-        nav { position: sticky; top: 0; background: #fff; padding: 2rem 10%; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; z-index: 1000; }
-        .nav-links a { margin-left: 30px; text-decoration: none; color: #000; font-size: 1rem; text-transform: uppercase; letter-spacing: 1px; }
-
-        /* Section Layout */
-        .content-section { padding: 8rem 10%; display: flex; align-items: center; gap: 80px; min-height: 60vh; border-bottom: 1px solid #eee; }
-        .img-col { flex: 1; height: 50vh; background: #f0f0f0; overflow: hidden; }
-        .img-col img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease-in-out; }
-        .img-col img:hover { transform: scale(1.05); } 
-        .text-col { flex: 1; }
-
-        /* Typography */
-        h1 { font-family: 'Playfair Display', serif; font-size: 5rem; line-height: 0.9; letter-spacing: -2px; }
-        h2 { font-family: 'Playfair Display', serif; font-size: 3.5rem; line-height: 0.9; letter-spacing: -2px; margin-bottom: 2rem; }
-        p { font-size: 1.3rem; color: #444; max-width: 600px; margin-top: 2rem; }
-
-        /* Cinematic Hero */
-        .hero { height: 80vh; width: 100%; display: flex; align-items: center; padding: 10%; background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('hero.jpg'); background-size: cover; background-position: center; color: #fff; }
-        .logo-hero { font-family: 'Playfair Display', serif; font-size: 1.5rem; margin-bottom: 1rem; color: #00e5ff; letter-spacing: 2px; text-transform: uppercase; }
-
-        /* Order Form */
-        .order-form { margin-top: 3rem; width: 100%; }
-        textarea { width: 100%; border: none; border-bottom: 2px solid #000; font-size: 1.2rem; padding: 1rem 0; outline: none; background: transparent; }
-        button { background: #000; color: #fff; padding: 2rem 4rem; font-size: 1.2rem; font-weight: bold; cursor: pointer; border: none; margin-top: 3rem; transition: background 0.3s; }
-        button:hover { background: #333; }
-
-        /* Offer Banner */
-        .offer { background: #000; color: #fff; padding: 5rem 10%; text-align: center; }
-        .offer h3 { font-size: 2.5rem; font-family: 'Playfair Display', serif; }
-
-        /* Copyright */
-        .copyright { text-align: center; padding: 2rem; font-size: 0.8rem; color: #888; border-top: 1px solid #eee; }
-
-        /* Mobile Optimization */
-        @media (max-width: 768px) {
-            .content-section { flex-direction: column; padding: 4rem 5%; text-align: center; gap: 2rem; }
-            .img-col { width: 100%; height: 30vh; }
-            h1 { font-size: 3rem; }
-            h2 { font-size: 2rem; }
-            p { font-size: 1.1rem; }
-            .hero { padding: 5%; }
+        /* Subtle image hover effect */
+        .img-hover-zoom {
+            overflow: hidden;
+        }
+        .img-hover-zoom img {
+            transition: transform 0.7s ease;
+        }
+        .img-hover-zoom:hover img {
+            transform: scale(1.05);
         }
     </style>
 </head>
-<body>
+<body class="font-sans bg-gray-50 text-gray-900 antialiased selection:bg-logix-blue selection:text-white">
 
-    <nav>
-    <!-- We added display: flex to align the logo and text side-by-side -->
-    <div style="display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 1.5rem;">
-        <img src="logo.png" alt="Logix Logo" style="height: 30px;">
-        LOGIX
+    <!-- Top Announcement Banner -->
+    <div class="bg-gray-900 text-white py-2.5 px-4 relative overflow-hidden text-center z-[60] text-sm">
+        <div class="absolute inset-0 bg-gradient-to-r from-transparent via-logix-accent/20 to-transparent pointer-events-none"></div>
+        <p class="relative z-10 font-medium">
+            <span class="text-logix-accent font-bold tracking-wider uppercase text-xs mr-2">Limited Time Offer</span> 
+            <span class="hidden sm:inline">Enjoy a 20% Discount on your first custom build order.</span>
+            <span class="sm:hidden">20% off your first custom order!</span>
+            <a href="#order" class="ml-2 inline-flex items-center hover:text-logix-accent transition-colors font-semibold underline decoration-logix-accent/50 underline-offset-2">
+                Claim Now <svg class="w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+            </a>
+        </p>
     </div>
-    
-    <div class="nav-links">
-        <a href="#about">About</a>
-        <a href="#work">Gadgets</a>
-        <a href="#order">Order</a>
-    </div>
-</nav>
 
-    <header class="hero">
-        <div class="hero-content">
-            <div class="logo-hero">LOGIX</div>
-            <h1 style="color: #fff;">Custom Gadgets. <br> Accessible to All.</h1>
+    <nav class="sticky top-0 bg-white/90 backdrop-blur-md z-50 border-b border-gray-200 transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <!-- Logo -->
+                <div class="flex-shrink-0 flex items-center gap-3">
+                    <img src="logo.png" alt="Logix Logo" class="h-10 w-auto mix-blend-multiply">
+                    <span class="font-serif font-bold text-2xl tracking-wide text-gray-900">LOGIX</span>
+                </div>
+                
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex space-x-8 items-center">
+                    <a href="#about" class="text-sm font-medium text-gray-600 hover:text-logix-blue uppercase tracking-wider transition-colors">About</a>
+                    <a href="#work" class="text-sm font-medium text-gray-600 hover:text-logix-blue uppercase tracking-wider transition-colors">Gadgets</a>
+                    <a href="#ideas" class="text-sm font-medium text-gray-600 hover:text-logix-blue uppercase tracking-wider transition-colors">Ideas</a>
+                    <a href="#order" class="px-5 py-2.5 bg-gray-900 text-white text-sm font-medium uppercase tracking-wider rounded hover:bg-logix-blue transition-colors shadow-sm">Order Now</a>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-button" class="text-gray-600 hover:text-gray-900 focus:outline-none p-2">
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu Panel -->
+        <div id="mobile-menu" class="md:hidden hidden bg-white border-t border-gray-100 absolute w-full shadow-lg">
+            <div class="px-4 pt-2 pb-6 space-y-2">
+                <a href="#about" class="block px-3 py-3 text-base font-medium text-gray-800 hover:bg-gray-50 rounded-md">About</a>
+                <a href="#work" class="block px-3 py-3 text-base font-medium text-gray-800 hover:bg-gray-50 rounded-md">Gadgets</a>
+                <a href="#ideas" class="block px-3 py-3 text-base font-medium text-gray-800 hover:bg-gray-50 rounded-md">Ideas</a>
+                <a href="#order" class="block px-3 py-3 text-base font-bold text-logix-blue hover:bg-gray-50 rounded-md">Order Now</a>
+            </div>
+        </div>
+    </nav>
+
+    <header class="relative h-[85vh] w-full flex items-center justify-center overflow-hidden bg-gradient-to-br from-blue-950 via-gray-900 to-blue-900">
+        <!-- Interactive Canvas Animation Background -->
+        <div class="absolute inset-0 z-0">
+            <canvas id="circuitCanvas" class="w-full h-full block opacity-70"></canvas>
+            <div class="absolute inset-0 bg-gradient-to-r from-gray-900/80 via-transparent to-transparent pointer-events-none"></div>
+        </div>
+        
+        <!-- Hero Content -->
+        <div class="relative z-10 text-left px-6 sm:px-12 lg:px-24 w-full max-w-7xl mx-auto pointer-events-none">
+            <span class="block text-logix-accent font-medium tracking-widest uppercase mb-4 text-sm sm:text-base drop-shadow-md">Welcome to Logix</span>
+            <h1 class="font-serif text-4xl sm:text-5xl md:text-6xl lg:text-8xl text-white leading-tight mb-6 drop-shadow-lg">
+                Custom Gadgets.<br>
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-white to-logix-accent">Accessible to All.</span>
+            </h1>
+            <p class="text-gray-200 text-base sm:text-xl max-w-2xl mb-10 font-light leading-relaxed drop-shadow-md">
+                We engineer personalized technological solutions tailored to your unique needs, bridging the gap between imagination and reality.
+            </p>
+            <a href="#order" class="pointer-events-auto inline-flex items-center justify-center px-8 py-4 text-base font-medium text-gray-900 bg-white rounded hover:bg-logix-accent hover:text-gray-900 transition-all duration-300 shadow-xl hover:shadow-2xl hover:-translate-y-1">
+                Start Your Project
+                <svg class="ml-2 -mr-1 w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+            </a>
         </div>
     </header>
 
-    <section id="about" class="content-section">
-        <div class="img-col"><img src="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=80" alt="Innovation"></div>
-        <div class="text-col">
-            <h2>Innovation for Everyone.</h2>
-            <p>At Logix, we believe high-quality custom gadgets shouldn't be a luxury. We design and build personalized solutions for everyday life at prices that make sense.</p>
+    <section id="about" class="py-16 md:py-24 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row items-center gap-10 md:gap-12 lg:gap-16">
+                <!-- Image Column -->
+                <div class="w-full md:w-2/5 lg:w-1/3 shrink-0 img-hover-zoom rounded-2xl shadow-xl overflow-hidden">
+                    <img src="about.jpg" alt="Detailed Circuit Board" class="w-full h-56 sm:h-64 object-cover">
+                </div>
+                <!-- Text Column -->
+                <div class="w-full md:w-3/5 lg:w-2/3 space-y-6 md:space-y-8">
+                    <div class="inline-block px-4 py-1.5 bg-blue-50 text-logix-blue rounded-full text-sm font-semibold tracking-wide uppercase">Our Mission</div>
+                    <h2 class="font-serif text-4xl sm:text-5xl lg:text-6xl text-gray-900 leading-tight">Innovation for <br>Everyone.</h2>
+                    <p class="text-xl text-gray-600 leading-relaxed font-light">
+                        At Logix, we firmly believe that high-quality, custom-engineered gadgets shouldn't be an exclusive luxury.
+                    </p>
+                    <p class="text-base text-gray-500 leading-relaxed">
+                        We dedicate ourselves to designing and building personalized technological solutions for everyday life. By streamlining our manufacturing process and focusing on practical design, we deliver exceptional quality at prices that make sense for individuals and small businesses alike.
+                    </p>
+                </div>
+            </div>
         </div>
     </section>
 
-    <section id="work" class="content-section">
-        <div class="img-col"><img src="https://images.unsplash.com/photo-1555664424-778a1e5e1b48?auto=format&fit=crop&w=1200&q=80" alt="Gadgets"></div>
-        <div class="text-col">
-            <h2>Made for You.</h2>
-            <p>Whether it's a personalized accessory, a unique tool, or a custom device, we turn your ideas into functional gadgets ready for your hands.</p>
+    <section id="work" class="py-16 md:py-24 bg-gray-50 border-t border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row-reverse items-center gap-10 md:gap-12 lg:gap-16">
+                <!-- Image Column -->
+                <div class="w-full md:w-2/5 lg:w-1/3 shrink-0 img-hover-zoom rounded-2xl shadow-xl overflow-hidden">
+                    <img src="gadgets.jpg" alt="Technician working on a gadget" class="w-full h-56 sm:h-64 object-cover">
+                </div>
+                <!-- Text Column -->
+                <div class="w-full md:w-3/5 lg:w-2/3 space-y-6 md:space-y-8">
+                    <div class="inline-block px-4 py-1.5 bg-gray-200 text-gray-800 rounded-full text-sm font-semibold tracking-wide uppercase">Our Craft</div>
+                    <h2 class="font-serif text-4xl sm:text-5xl lg:text-6xl text-gray-900 leading-tight">Made Exactly<br>for You.</h2>
+                    <p class="text-xl text-gray-600 leading-relaxed font-light">
+                        We turn your concepts into tangible, functional devices ready for your hands.
+                    </p>
+                    <ul class="space-y-4 mt-6">
+                        <li class="flex items-start">
+                            <svg class="h-6 w-6 text-logix-blue mr-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                            </svg>
+                            <span class="text-gray-700">Personalized smart home accessories</span>
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="h-6 w-6 text-logix-blue mr-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                            </svg>
+                            <span class="text-gray-700">Unique workflow automation tools</span>
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="h-6 w-6 text-logix-blue mr-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                            </svg>
+                            <span class="text-gray-700">Custom sensory and data collection devices</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
         </div>
     </section>
 
-    <section id="order" class="content-section" style="border:none;">
-        <div class="img-col"><img src="order.jpg" alt="Order Request"></div>
-        <!-- FIXED: Added text-col wrapper here -->
-        <div class="text-col">
-            <h2>Start Your Order.</h2>
-            <p>Tell us what you need and your budget. We'll handle the rest.</p>
-            
-            <form action="https://formsubmit.co/brosigma863@gmail.com" method="POST">
-                <input type="hidden" name="_next" value="success.html">
-                <input type="hidden" name="_subject" value="New Order from Logix Website">
+    <section id="ideas" class="py-16 md:py-24 bg-white border-t border-gray-200 overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12 text-center">
+            <h2 class="font-serif text-4xl sm:text-5xl text-gray-900 mb-4">Past Projects & Ideas</h2>
+            <p class="text-gray-500 max-w-2xl mx-auto">A glimpse into what we can build for you. Swipe to explore.</p>
+        </div>
+        
+        <!-- Horizontal scrolling gallery -->
+        <div class="flex overflow-x-auto gap-6 px-4 sm:px-8 md:px-16 pb-8 hide-scrollbar snap-x snap-mandatory">
+            <!-- Reusing the provided images for the gallery to ensure they load -->
+            <div class="flex-none w-80 sm:w-96 snap-center group relative rounded-xl overflow-hidden shadow-lg">
+                <img src="https://images.unsplash.com/photo-1581092160562-40aa08e78837?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Hardware Repair" class="w-full h-72 object-cover transition duration-500 group-hover:scale-110">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
+                    <h3 class="text-white text-xl font-medium">Custom Logic Boards</h3>
+                </div>
+            </div>
+            <div class="flex-none w-80 sm:w-96 snap-center group relative rounded-xl overflow-hidden shadow-lg">
+                <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Circuit Design" class="w-full h-72 object-cover transition duration-500 group-hover:scale-110">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
+                    <h3 class="text-white text-xl font-medium">Microcontroller Programming</h3>
+                </div>
+            </div>
+            <div class="flex-none w-80 sm:w-96 snap-center group relative rounded-xl overflow-hidden shadow-lg">
+                <img src="https://images.unsplash.com/photo-1580894742597-87bc8789db3d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Prototyping" class="w-full h-72 object-cover transition duration-500 group-hover:scale-110">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
+                    <h3 class="text-white text-xl font-medium">Rapid Prototyping</h3>
+                </div>
+            </div>
+             <div class="flex-none w-80 sm:w-96 snap-center group relative rounded-xl overflow-hidden shadow-lg">
+                <img src="https://images.unsplash.com/photo-1555664424-778a1e5e1b48?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Finished Product" class="w-full h-72 object-cover transition duration-500 group-hover:scale-110">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
+                    <h3 class="text-white text-xl font-medium">Final Assembly</h3>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="order" class="py-16 md:py-24 bg-gray-50 border-t border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col lg:flex-row">
                 
-                <textarea name="Project" placeholder="Describe your custom gadget idea..." rows="3" required></textarea>
-                
-                <div style="display: flex; align-items: center; border-bottom: 2px solid #000; padding: 1rem 0;">
-                    <span style="font-size: 1.2rem; font-weight: bold; margin-right: 10px;">₹</span>
-                    <input type="number" name="Budget" placeholder="Enter your budget" style="width: 100%; border: none; font-size: 1.2rem; outline: none; background: transparent;" required>
+                <!-- Form Image Side -->
+                <div class="w-full lg:w-5/12 bg-gray-900 relative min-h-[300px] lg:min-h-full">
+                    <img src="order.jpg" alt="Prototyping setup" class="absolute inset-0 w-full h-full object-cover opacity-60 mix-blend-overlay">
+                    <div class="absolute inset-0 p-12 flex flex-col justify-between z-10">
+                        <div>
+                            <h3 class="font-serif text-3xl text-white mb-4">Let's build it.</h3>
+                            <p class="text-gray-300 text-lg">Tell us about your project, and our engineering team will get back to you with a feasibility report and quote.</p>
+                        </div>
+                        <div class="mt-8 space-y-4 text-gray-300">
+                            <div class="flex items-center">
+                                <svg class="w-5 h-5 mr-3 text-logix-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                                hello@logix-tech.com
+                            </div>
+                            <div class="flex items-center">
+                                <svg class="w-5 h-5 mr-3 text-logix-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                                New Delhi, India
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <button type="submit">SUBMIT REQUEST</button>
-            </form>
+                <!-- Form Side -->
+                <div class="w-full lg:w-7/12 p-8 sm:p-12 lg:p-16">
+                    <h2 class="text-3xl font-serif font-bold text-gray-900 mb-2">Request a Quote</h2>
+                    <p class="text-sm text-gray-500 mb-8"><span class="text-red-500">*</span> indicates a required field.</p>
+                    
+                    <form action="https://formsubmit.co/brosigma863@gmail.com" method="POST" class="space-y-8">
+                        <!-- Redirect after submission to the new success page -->
+                        <input type="hidden" name="_next" value="success.html">
+                        <input type="hidden" name="_subject" value="New Order Inquiry - Logix">
+                        <input type="hidden" name="_captcha" value="false">
+
+                        <!-- Project Description -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2" for="project">
+                                Describe your custom gadget idea <span class="text-red-500">*</span>
+                            </label>
+                            <textarea 
+                                id="project" 
+                                name="Project" 
+                                rows="4" 
+                                class="w-full px-0 py-3 bg-transparent border-0 border-b-2 border-gray-300 focus:border-gray-900 focus:ring-0 text-gray-900 text-base placeholder-gray-400 resize-none transition-colors" 
+                                placeholder="E.g., I need a battery-powered sensor that detects moisture and alerts my phone..." 
+                                required></textarea>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <!-- Email -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2" for="email">
+                                    Email Address (Optional)
+                                </label>
+                                <input 
+                                    type="email" 
+                                    id="email" 
+                                    name="Email" 
+                                    class="w-full px-0 py-3 bg-transparent border-0 border-b-2 border-gray-300 focus:border-gray-900 focus:ring-0 text-gray-900 text-base placeholder-gray-400 transition-colors" 
+                                    placeholder="you@example.com">
+                            </div>
+
+                            <!-- Phone -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2" for="phone">
+                                    Phone Number <span class="text-red-500">*</span>
+                                </label>
+                                <div class="flex relative w-full" id="phone-input-group">
+                                    <!-- Custom Dropdown Trigger -->
+                                    <button type="button" id="country-dropdown-btn" class="flex items-center gap-2 bg-gray-50 border-0 border-b-2 border-gray-300 focus:border-gray-900 focus:ring-0 py-3 pl-3 pr-2 text-gray-700 text-base transition-colors rounded-tl-md hover:bg-gray-100">
+                                        <img src="https://flagcdn.com/w20/in.png" alt="IN" class="w-5 h-auto object-contain" id="selected-flag">
+                                        <span id="selected-code">+91</span>
+                                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                    </button>
+                                    
+                                    <!-- Hidden Input for Form Submission -->
+                                    <input type="hidden" name="CountryCode" id="country-code-input" value="+91">
+
+                                    <!-- Custom Dropdown Menu -->
+                                    <div id="country-dropdown-menu" class="hidden absolute top-full left-0 mt-1 w-full max-h-60 overflow-y-auto bg-white border border-gray-200 rounded-md shadow-lg z-50">
+                                        <!-- Javascript will populate this -->
+                                    </div>
+
+                                    <input 
+                                        type="tel" 
+                                        id="phone" 
+                                        name="Phone" 
+                                        class="flex-1 w-full px-3 py-3 bg-transparent border-0 border-b-2 border-gray-300 focus:border-gray-900 focus:ring-0 text-gray-900 text-base placeholder-gray-400 transition-colors" 
+                                        placeholder="12345 67890" 
+                                        required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Budget -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2" for="budget">
+                                Estimated Budget (INR) <span class="text-red-500">*</span>
+                            </label>
+                            <div class="relative flex items-center">
+                                <span class="absolute left-0 top-1/2 -translate-y-1/2 text-gray-500 font-serif text-xl">₹</span>
+                                <input 
+                                    type="number" 
+                                    id="budget" 
+                                    name="Budget" 
+                                    min="0"
+                                    class="w-full pl-6 py-3 bg-transparent border-0 border-b-2 border-gray-300 focus:border-gray-900 focus:ring-0 text-gray-900 text-base sm:text-lg placeholder-gray-400 transition-colors" 
+                                    placeholder="5000" 
+                                    required>
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="pt-4">
+                            <button type="submit" class="w-full sm:w-auto px-8 py-4 bg-gray-900 text-white font-medium tracking-wide uppercase rounded hover:bg-logix-blue focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors shadow-lg">
+                                Submit Request
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
     </section>
 
-    <div class="offer">
-        <h3>20% Discount for the First 3 Orders.</h3>
-    </div>
+    <footer class="bg-white py-12 border-t border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center">
+            <div class="flex items-center gap-2 mb-4 md:mb-0">
+                <img src="logo.png" alt="Logix Logo" class="h-8 w-auto mix-blend-multiply opacity-75 grayscale">
+                <span class="font-serif font-bold text-lg text-gray-500">LOGIX</span>
+            </div>
+            <p class="text-sm text-gray-400 uppercase tracking-wider">
+                &copy; <span id="current-year"></span> LOGIX TECHNOLOGIES. ALL RIGHTS RESERVED.
+            </p>
+        </div>
+    </footer>
 
-    <div class="copyright">
-        © 2026 LOGIX. ALL RIGHTS RESERVED.
-    </div>
+    <script>
+        const countryData = [
+            { code: 'AF', name: 'Afghanistan', dial: '+93' },
+            { code: 'AL', name: 'Albania', dial: '+355' },
+            { code: 'DZ', name: 'Algeria', dial: '+213' },
+            { code: 'AS', name: 'American Samoa', dial: '+1-684' },
+            { code: 'AD', name: 'Andorra', dial: '+376' },
+            { code: 'AO', name: 'Angola', dial: '+244' },
+            { code: 'AI', name: 'Anguilla', dial: '+1-264' },
+            { code: 'AG', name: 'Antigua and Barbuda', dial: '+1-268' },
+            { code: 'AR', name: 'Argentina', dial: '+54' },
+            { code: 'AM', name: 'Armenia', dial: '+374' },
+            { code: 'AW', name: 'Aruba', dial: '+297' },
+            { code: 'AU', name: 'Australia', dial: '+61' },
+            { code: 'AT', name: 'Austria', dial: '+43' },
+            { code: 'AZ', name: 'Azerbaijan', dial: '+994' },
+            { code: 'BS', name: 'Bahamas', dial: '+1-242' },
+            { code: 'BH', name: 'Bahrain', dial: '+973' },
+            { code: 'BD', name: 'Bangladesh', dial: '+880' },
+            { code: 'BB', name: 'Barbados', dial: '+1-246' },
+            { code: 'BY', name: 'Belarus', dial: '+375' },
+            { code: 'BE', name: 'Belgium', dial: '+32' },
+            { code: 'BZ', name: 'Belize', dial: '+501' },
+            { code: 'BJ', name: 'Benin', dial: '+229' },
+            { code: 'BM', name: 'Bermuda', dial: '+1-441' },
+            { code: 'BT', name: 'Bhutan', dial: '+975' },
+            { code: 'BO', name: 'Bolivia', dial: '+591' },
+            { code: 'BA', name: 'Bosnia and Herzegovina', dial: '+387' },
+            { code: 'BW', name: 'Botswana', dial: '+267' },
+            { code: 'BR', name: 'Brazil', dial: '+55' },
+            { code: 'IO', name: 'British Indian Ocean Territory', dial: '+246' },
+            { code: 'VG', name: 'British Virgin Islands', dial: '+1-284' },
+            { code: 'BN', name: 'Brunei', dial: '+673' },
+            { code: 'BG', name: 'Bulgaria', dial: '+359' },
+            { code: 'BF', name: 'Burkina Faso', dial: '+226' },
+            { code: 'BI', name: 'Burundi', dial: '+257' },
+            { code: 'KH', name: 'Cambodia', dial: '+855' },
+            { code: 'CM', name: 'Cameroon', dial: '+237' },
+            { code: 'CA', name: 'Canada', dial: '+1' },
+            { code: 'CV', name: 'Cape Verde', dial: '+238' },
+            { code: 'KY', name: 'Cayman Islands', dial: '+1-345' },
+            { code: 'CF', name: 'Central African Republic', dial: '+236' },
+            { code: 'TD', name: 'Chad', dial: '+235' },
+            { code: 'CL', name: 'Chile', dial: '+56' },
+            { code: 'CN', name: 'China', dial: '+86' },
+            { code: 'CX', name: 'Christmas Island', dial: '+61' },
+            { code: 'CC', name: 'Cocos Islands', dial: '+61' },
+            { code: 'CO', name: 'Colombia', dial: '+57' },
+            { code: 'KM', name: 'Comoros', dial: '+269' },
+            { code: 'CK', name: 'Cook Islands', dial: '+682' },
+            { code: 'CR', name: 'Costa Rica', dial: '+506' },
+            { code: 'HR', name: 'Croatia', dial: '+385' },
+            { code: 'CU', name: 'Cuba', dial: '+53' },
+            { code: 'CW', name: 'Curacao', dial: '+599' },
+            { code: 'CY', name: 'Cyprus', dial: '+357' },
+            { code: 'CZ', name: 'Czech Republic', dial: '+420' },
+            { code: 'CD', name: 'Democratic Republic of the Congo', dial: '+243' },
+            { code: 'DK', name: 'Denmark', dial: '+45' },
+            { code: 'DJ', name: 'Djibouti', dial: '+253' },
+            { code: 'DM', name: 'Dominica', dial: '+1-767' },
+            { code: 'DO', name: 'Dominican Republic', dial: '+1-809' },
+            { code: 'EC', name: 'Ecuador', dial: '+593' },
+            { code: 'EG', name: 'Egypt', dial: '+20' },
+            { code: 'SV', name: 'El Salvador', dial: '+503' },
+            { code: 'GQ', name: 'Equatorial Guinea', dial: '+240' },
+            { code: 'ER', name: 'Eritrea', dial: '+291' },
+            { code: 'EE', name: 'Estonia', dial: '+372' },
+            { code: 'ET', name: 'Ethiopia', dial: '+251' },
+            { code: 'FK', name: 'Falkland Islands', dial: '+500' },
+            { code: 'FO', name: 'Faroe Islands', dial: '+298' },
+            { code: 'FJ', name: 'Fiji', dial: '+679' },
+            { code: 'FI', name: 'Finland', dial: '+358' },
+            { code: 'FR', name: 'France', dial: '+33' },
+            { code: 'GF', name: 'French Guiana', dial: '+594' },
+            { code: 'PF', name: 'French Polynesia', dial: '+689' },
+            { code: 'GA', name: 'Gabon', dial: '+241' },
+            { code: 'GM', name: 'Gambia', dial: '+220' },
+            { code: 'GE', name: 'Georgia', dial: '+995' },
+            { code: 'DE', name: 'Germany', dial: '+49' },
+            { code: 'GH', name: 'Ghana', dial: '+233' },
+            { code: 'GI', name: 'Gibraltar', dial: '+350' },
+            { code: 'GR', name: 'Greece', dial: '+30' },
+            { code: 'GL', name: 'Greenland', dial: '+299' },
+            { code: 'GD', name: 'Grenada', dial: '+1-473' },
+            { code: 'GP', name: 'Guadeloupe', dial: '+590' },
+            { code: 'GU', name: 'Guam', dial: '+1-671' },
+            { code: 'GT', name: 'Guatemala', dial: '+502' },
+            { code: 'GG', name: 'Guernsey', dial: '+44-1481' },
+            { code: 'GN', name: 'Guinea', dial: '+224' },
+            { code: 'GW', name: 'Guinea-Bissau', dial: '+245' },
+            { code: 'GY', name: 'Guyana', dial: '+592' },
+            { code: 'HT', name: 'Haiti', dial: '+509' },
+            { code: 'HN', name: 'Honduras', dial: '+504' },
+            { code: 'HK', name: 'Hong Kong', dial: '+852' },
+            { code: 'HU', name: 'Hungary', dial: '+36' },
+            { code: 'IS', name: 'Iceland', dial: '+354' },
+            { code: 'IN', name: 'India', dial: '+91' },
+            { code: 'ID', name: 'Indonesia', dial: '+62' },
+            { code: 'IR', name: 'Iran', dial: '+98' },
+            { code: 'IQ', name: 'Iraq', dial: '+964' },
+            { code: 'IE', name: 'Ireland', dial: '+353' },
+            { code: 'IM', name: 'Isle of Man', dial: '+44-1624' },
+            { code: 'IL', name: 'Israel', dial: '+972' },
+            { code: 'IT', name: 'Italy', dial: '+39' },
+            { code: 'CI', name: 'Ivory Coast', dial: '+225' },
+            { code: 'JM', name: 'Jamaica', dial: '+1-876' },
+            { code: 'JP', name: 'Japan', dial: '+81' },
+            { code: 'JE', name: 'Jersey', dial: '+44-1534' },
+            { code: 'JO', name: 'Jordan', dial: '+962' },
+            { code: 'KZ', name: 'Kazakhstan', dial: '+7' },
+            { code: 'KE', name: 'Kenya', dial: '+254' },
+            { code: 'KI', name: 'Kiribati', dial: '+686' },
+            { code: 'XK', name: 'Kosovo', dial: '+383' },
+            { code: 'KW', name: 'Kuwait', dial: '+965' },
+            { code: 'KG', name: 'Kyrgyzstan', dial: '+996' },
+            { code: 'LA', name: 'Laos', dial: '+856' },
+            { code: 'LV', name: 'Latvia', dial: '+371' },
+            { code: 'LB', name: 'Lebanon', dial: '+961' },
+            { code: 'LS', name: 'Lesotho', dial: '+266' },
+            { code: 'LR', name: 'Liberia', dial: '+231' },
+            { code: 'LY', name: 'Libya', dial: '+218' },
+            { code: 'LI', name: 'Liechtenstein', dial: '+423' },
+            { code: 'LT', name: 'Lithuania', dial: '+370' },
+            { code: 'LU', name: 'Luxembourg', dial: '+352' },
+            { code: 'MO', name: 'Macao', dial: '+853' },
+            { code: 'MK', name: 'Macedonia', dial: '+389' },
+            { code: 'MG', name: 'Madagascar', dial: '+261' },
+            { code: 'MW', name: 'Malawi', dial: '+265' },
+            { code: 'MY', name: 'Malaysia', dial: '+60' },
+            { code: 'MV', name: 'Maldives', dial: '+960' },
+            { code: 'ML', name: 'Mali', dial: '+223' },
+            { code: 'MT', name: 'Malta', dial: '+356' },
+            { code: 'MH', name: 'Marshall Islands', dial: '+692' },
+            { code: 'MQ', name: 'Martinique', dial: '+596' },
+            { code: 'MR', name: 'Mauritania', dial: '+222' },
+            { code: 'MU', name: 'Mauritius', dial: '+230' },
+            { code: 'YT', name: 'Mayotte', dial: '+262' },
+            { code: 'MX', name: 'Mexico', dial: '+52' },
+            { code: 'FM', name: 'Micronesia', dial: '+691' },
+            { code: 'MD', name: 'Moldova', dial: '+373' },
+            { code: 'MC', name: 'Monaco', dial: '+377' },
+            { code: 'MN', name: 'Mongolia', dial: '+976' },
+            { code: 'ME', name: 'Montenegro', dial: '+382' },
+            { code: 'MS', name: 'Montserrat', dial: '+1-664' },
+            { code: 'MA', name: 'Morocco', dial: '+212' },
+            { code: 'MZ', name: 'Mozambique', dial: '+258' },
+            { code: 'MM', name: 'Myanmar', dial: '+95' },
+            { code: 'NA', name: 'Namibia', dial: '+264' },
+            { code: 'NR', name: 'Nauru', dial: '+674' },
+            { code: 'NP', name: 'Nepal', dial: '+977' },
+            { code: 'NL', name: 'Netherlands', dial: '+31' },
+            { code: 'NC', name: 'New Caledonia', dial: '+687' },
+            { code: 'NZ', name: 'New Zealand', dial: '+64' },
+            { code: 'NI', name: 'Nicaragua', dial: '+505' },
+            { code: 'NE', name: 'Niger', dial: '+227' },
+            { code: 'NG', name: 'Nigeria', dial: '+234' },
+            { code: 'NU', name: 'Niue', dial: '+683' },
+            { code: 'KP', name: 'North Korea', dial: '+850' },
+            { code: 'MP', name: 'Northern Mariana Islands', dial: '+1-670' },
+            { code: 'NO', name: 'Norway', dial: '+47' },
+            { code: 'OM', name: 'Oman', dial: '+968' },
+            { code: 'PK', name: 'Pakistan', dial: '+92' },
+            { code: 'PW', name: 'Palau', dial: '+680' },
+            { code: 'PS', name: 'Palestinian Territory', dial: '+970' },
+            { code: 'PA', name: 'Panama', dial: '+507' },
+            { code: 'PG', name: 'Papua New Guinea', dial: '+675' },
+            { code: 'PY', name: 'Paraguay', dial: '+595' },
+            { code: 'PE', name: 'Peru', dial: '+51' },
+            { code: 'PH', name: 'Philippines', dial: '+63' },
+            { code: 'PN', name: 'Pitcairn', dial: '+64' },
+            { code: 'PL', name: 'Poland', dial: '+48' },
+            { code: 'PT', name: 'Portugal', dial: '+351' },
+            { code: 'PR', name: 'Puerto Rico', dial: '+1-787' },
+            { code: 'QA', name: 'Qatar', dial: '+974' },
+            { code: 'CG', name: 'Republic of the Congo', dial: '+242' },
+            { code: 'RE', name: 'Reunion', dial: '+262' },
+            { code: 'RO', name: 'Romania', dial: '+40' },
+            { code: 'RU', name: 'Russia', dial: '+7' },
+            { code: 'RW', name: 'Rwanda', dial: '+250' },
+            { code: 'BL', name: 'Saint Barthelemy', dial: '+590' },
+            { code: 'SH', name: 'Saint Helena', dial: '+290' },
+            { code: 'KN', name: 'Saint Kitts and Nevis', dial: '+1-869' },
+            { code: 'LC', name: 'Saint Lucia', dial: '+1-758' },
+            { code: 'MF', name: 'Saint Martin', dial: '+590' },
+            { code: 'PM', name: 'Saint Pierre and Miquelon', dial: '+508' },
+            { code: 'VC', name: 'Saint Vincent and the Grenadines', dial: '+1-784' },
+            { code: 'WS', name: 'Samoa', dial: '+685' },
+            { code: 'SM', name: 'San Marino', dial: '+378' },
+            { code: 'ST', name: 'Sao Tome and Principe', dial: '+239' },
+            { code: 'SA', name: 'Saudi Arabia', dial: '+966' },
+            { code: 'SN', name: 'Senegal', dial: '+221' },
+            { code: 'RS', name: 'Serbia', dial: '+381' },
+            { code: 'SC', name: 'Seychelles', dial: '+248' },
+            { code: 'SL', name: 'Sierra Leone', dial: '+232' },
+            { code: 'SG', name: 'Singapore', dial: '+65' },
+            { code: 'SX', name: 'Sint Maarten', dial: '+1-721' },
+            { code: 'SK', name: 'Slovakia', dial: '+421' },
+            { code: 'SI', name: 'Slovenia', dial: '+386' },
+            { code: 'SB', name: 'Solomon Islands', dial: '+677' },
+            { code: 'SO', name: 'Somalia', dial: '+252' },
+            { code: 'ZA', name: 'South Africa', dial: '+27' },
+            { code: 'KR', name: 'South Korea', dial: '+82' },
+            { code: 'SS', name: 'South Sudan', dial: '+211' },
+            { code: 'ES', name: 'Spain', dial: '+34' },
+            { code: 'LK', name: 'Sri Lanka', dial: '+94' },
+            { code: 'SD', name: 'Sudan', dial: '+249' },
+            { code: 'SR', name: 'Suriname', dial: '+597' },
+            { code: 'SJ', name: 'Svalbard and Jan Mayen', dial: '+47' },
+            { code: 'SZ', name: 'Swaziland', dial: '+268' },
+            { code: 'SE', name: 'Sweden', dial: '+46' },
+            { code: 'CH', name: 'Switzerland', dial: '+41' },
+            { code: 'SY', name: 'Syria', dial: '+963' },
+            { code: 'TW', name: 'Taiwan', dial: '+886' },
+            { code: 'TJ', name: 'Tajikistan', dial: '+992' },
+            { code: 'TZ', name: 'Tanzania', dial: '+255' },
+            { code: 'TH', name: 'Thailand', dial: '+66' },
+            { code: 'TG', name: 'Togo', dial: '+228' },
+            { code: 'TK', name: 'Tokelau', dial: '+690' },
+            { code: 'TO', name: 'Tonga', dial: '+676' },
+            { code: 'TT', name: 'Trinidad and Tobago', dial: '+1-868' },
+            { code: 'TN', name: 'Tunisia', dial: '+216' },
+            { code: 'TR', name: 'Turkey', dial: '+90' },
+            { code: 'TM', name: 'Turkmenistan', dial: '+993' },
+            { code: 'TC', name: 'Turks and Caicos Islands', dial: '+1-649' },
+            { code: 'TV', name: 'Tuvalu', dial: '+688' },
+            { code: 'VI', name: 'U.S. Virgin Islands', dial: '+1-340' },
+            { code: 'UG', name: 'Uganda', dial: '+256' },
+            { code: 'UA', name: 'Ukraine', dial: '+380' },
+            { code: 'AE', name: 'United Arab Emirates', dial: '+971' },
+            { code: 'GB', name: 'United Kingdom', dial: '+44' },
+            { code: 'US', name: 'United States', dial: '+1' },
+            { code: 'UY', name: 'Uruguay', dial: '+598' },
+            { code: 'UZ', name: 'Uzbekistan', dial: '+998' },
+            { code: 'VU', name: 'Vanuatu', dial: '+678' },
+            { code: 'VA', name: 'Vatican', dial: '+379' },
+            { code: 'VE', name: 'Venezuela', dial: '+58' },
+            { code: 'VN', name: 'Vietnam', dial: '+84' },
+            { code: 'WF', name: 'Wallis and Futuna', dial: '+681' },
+            { code: 'EH', name: 'Western Sahara', dial: '+212' },
+            { code: 'YE', name: 'Yemen', dial: '+967' },
+            { code: 'ZM', name: 'Zambia', dial: '+260' },
+            { code: 'ZW', name: 'Zimbabwe', dial: '+263' }
+        ];
 
+        const dropdownBtn = document.getElementById('country-dropdown-btn');
+        const dropdownMenu = document.getElementById('country-dropdown-menu');
+        const selectedFlag = document.getElementById('selected-flag');
+        const selectedCode = document.getElementById('selected-code');
+        const countryCodeInput = document.getElementById('country-code-input');
+        
+        // Populate custom dropdown
+        countryData.forEach(country => {
+            const option = document.createElement('div');
+            option.className = 'flex items-center px-4 py-3 hover:bg-gray-100 cursor-pointer text-base text-gray-700 transition-colors';
+            // Use flagcdn for reliable images across OS
+            const imgUrl = `https://flagcdn.com/w20/${country.code.toLowerCase()}.png`;
+            
+            option.innerHTML = `
+                <img src="${imgUrl}" alt="${country.code}" class="w-5 h-auto object-contain mr-3">
+                <span class="flex-1 truncate">${country.name}</span>
+                <span class="text-gray-500 font-medium">${country.dial}</span>
+            `;
+            
+            option.addEventListener('click', () => {
+                selectedFlag.src = imgUrl;
+                selectedFlag.alt = country.code;
+                selectedCode.textContent = country.dial;
+                countryCodeInput.value = country.dial;
+                dropdownMenu.classList.add('hidden');
+            });
+            
+            dropdownMenu.appendChild(option);
+        });
+
+        // Toggle dropdown
+        dropdownBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); // Prevent document click from immediately closing
+            dropdownMenu.classList.toggle('hidden');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!dropdownBtn.contains(e.target) && !dropdownMenu.contains(e.target)) {
+                dropdownMenu.classList.add('hidden');
+            }
+        });
+
+        const canvas = document.getElementById('circuitCanvas');
+        const ctx = canvas.getContext('2d');
+        let width, height;
+        
+        let nodes = [];
+        const nodeCount = 100; // Number of particles
+        const connectionDistance = 120; // Max distance to connect nodes
+        const mouseConnectionDistance = 200; // Max distance to connect to mouse
+        
+        // --- INTERACTIVITY: Mouse/Touch tracking ---
+        let mouse = { x: -1000, y: -1000 };
+        
+        function updateMousePos(e) {
+            const rect = canvas.getBoundingClientRect();
+            // Calculate scale based on actual vs element size to ensure tip accuracy
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+
+            mouse.x = (e.clientX - rect.left) * scaleX;
+            mouse.y = (e.clientY - rect.top) * scaleY;
+        }
+
+        window.addEventListener('mousemove', updateMousePos);
+        
+        window.addEventListener('touchmove', (e) => {
+            if(e.touches.length > 0) {
+                updateMousePos(e.touches[0]);
+            }
+        });
+
+        window.addEventListener('mouseout', () => {
+            mouse.x = -1000;
+            mouse.y = -1000;
+        });
+
+        window.addEventListener('touchend', () => {
+            mouse.x = -1000;
+            mouse.y = -1000;
+        });
+        
+        function resize() {
+            // Get the exact computed styling dimensions
+            const rect = canvas.getBoundingClientRect();
+            // Set internal resolution to match exact pixel dimensions
+            width = canvas.width = rect.width;
+            height = canvas.height = rect.height; 
+            initNodes();
+        }
+
+        window.addEventListener('resize', resize);
+        
+        class Node {
+            constructor() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.vx = (Math.random() - 0.5) * 1.2; // Velocity X
+                this.vy = (Math.random() - 0.5) * 1.2; // Velocity Y
+                this.radius = Math.random() * 1.5 + 1;
+                // Mix of colors for a tech feel
+                const colors = ['#00e5ff', '#38bdf8', '#818cf8', '#ffffff'];
+                this.color = colors[Math.floor(Math.random() * colors.length)];
+            }
+
+            update() {
+                // Move node
+                this.x += this.vx;
+                this.y += this.vy;
+
+                // Bounce off edges
+                if (this.x < 0 || this.x > width) this.vx *= -1;
+                if (this.y < 0 || this.y > height) this.vy *= -1;
+
+                // Mouse interaction: Gentle push away
+                let dxMouse = this.x - mouse.x;
+                let dyMouse = this.y - mouse.y;
+                let distMouse = Math.sqrt(dxMouse*dxMouse + dyMouse*dyMouse);
+
+                if (distMouse < mouseConnectionDistance) {
+                    let force = (mouseConnectionDistance - distMouse) / mouseConnectionDistance;
+                    this.x += (dxMouse / distMouse) * force * 1.5;
+                    this.y += (dyMouse / distMouse) * force * 1.5;
+                }
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.shadowBlur = 8;
+                ctx.shadowColor = this.color;
+                ctx.fill();
+                ctx.shadowBlur = 0; // Reset shadow for lines
+            }
+        }
+
+        function initNodes() {
+            nodes = [];
+            for (let i = 0; i < nodeCount; i++) {
+                nodes.push(new Node());
+            }
+        }
+
+        function animate() {
+            // Clear canvas with a slight trail effect
+            ctx.clearRect(0, 0, width, height);
+
+            // Update and draw all nodes
+            nodes.forEach(node => {
+                node.update();
+                node.draw();
+            });
+
+            // Draw connections (constellation network)
+            for (let i = 0; i < nodes.length; i++) {
+                // Connect to other nodes
+                for (let j = i + 1; j < nodes.length; j++) {
+                    let dx = nodes[i].x - nodes[j].x;
+                    let dy = nodes[i].y - nodes[j].y;
+                    let dist = Math.sqrt(dx*dx + dy*dy);
+
+                    if (dist < connectionDistance) {
+                        ctx.beginPath();
+                        ctx.moveTo(nodes[i].x, nodes[i].y);
+                        ctx.lineTo(nodes[j].x, nodes[j].y);
+                        // Fade line opacity based on distance
+                        let opacity = 1 - (dist / connectionDistance);
+                        ctx.strokeStyle = `rgba(0, 229, 255, ${opacity * 0.5})`;
+                        ctx.lineWidth = 1;
+                        ctx.stroke();
+                    }
+                }
+
+                // Connect to mouse
+                let dxMouse = nodes[i].x - mouse.x;
+                let dyMouse = nodes[i].y - mouse.y;
+                let distMouse = Math.sqrt(dxMouse*dxMouse + dyMouse*dyMouse);
+
+                if (distMouse < mouseConnectionDistance) {
+                    ctx.beginPath();
+                    ctx.moveTo(nodes[i].x, nodes[i].y);
+                    ctx.lineTo(mouse.x, mouse.y);
+                    // Brighter line connecting to cursor
+                    let opacity = 1 - (distMouse / mouseConnectionDistance);
+                    ctx.strokeStyle = `rgba(56, 189, 248, ${opacity * 0.8})`; 
+                    ctx.lineWidth = 1.5;
+                    ctx.stroke();
+                }
+            }
+
+            requestAnimationFrame(animate);
+        }
+        
+        // Initialize animation
+        resize();
+        animate();
+
+        // Set current year in footer
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+
+        // Mobile menu toggle
+        const btn = document.getElementById('mobile-menu-button');
+        const menu = document.getElementById('mobile-menu');
+
+        btn.addEventListener('click', () => {
+            menu.classList.toggle('hidden');
+        });
+
+        // Close mobile menu when a link is clicked
+        const mobileLinks = menu.querySelectorAll('a');
+        mobileLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                menu.classList.add('hidden');
+            });
+        });
+
+        // Navbar scroll effect
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 20) {
+                navbar.classList.add('shadow-sm', 'bg-white/95');
+                navbar.classList.remove('bg-white/90');
+            } else {
+                navbar.classList.remove('shadow-sm', 'bg-white/95');
+                navbar.classList.add('bg-white/90');
+            }
+        });
+    </script>
 </body>
 </html>
