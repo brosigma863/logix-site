@@ -460,18 +460,21 @@
                         <!-- Budget -->
                         <div class="relative group">
                             <label class="block text-xs font-semibold tracking-widest text-gray-400 uppercase mb-2 transition-colors group-focus-within:text-logix-accent" for="budget">
-                                Estimated Budget (INR) <span class="text-logix-accent">*</span>
+                                Estimated Budget (<span id="budget-label-code">INR</span>) <span class="text-logix-accent">*</span>
                             </label>
                             <div class="relative flex items-center">
-                                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-serif text-xl">₹</span>
+                                <span id="budget-symbol" class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-serif text-xl pointer-events-none">₹</span>
                                 <input 
                                     type="number" 
                                     id="budget" 
-                                    name="Budget" 
                                     min="0"
+                                    step="any"
                                     class="w-full pl-10 pr-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:border-logix-accent focus:bg-white/10 focus:ring-0 text-white text-base sm:text-lg placeholder-gray-600 transition-all" 
                                     placeholder="5000" 
                                     required>
+                                <!-- Sent in the email: e.g. "$100 USD (American Dollars)" -->
+                                <input type="hidden" name="Budget" id="budget-formatted">
+                                <input type="hidden" name="Currency" id="budget-currency" value="INR">
                             </div>
                         </div>
 
@@ -776,6 +779,7 @@
                 selectedFlag.alt = country.code;
                 selectedCode.textContent = country.dial;
                 countryCodeInput.value = country.dial;
+                updateCurrency(country.code);
                 dropdownMenu.classList.add('hidden');
             });
             
@@ -786,6 +790,97 @@
             e.stopPropagation();
             dropdownMenu.classList.toggle('hidden');
         });
+
+
+        // ==========================================
+        // BUDGET CURRENCY (follows the selected phone country)
+        // ==========================================
+        const USD = ['$', 'USD', 'American Dollars'], EUR = ['€', 'EUR', 'Euros'],
+              XOF = ['CFA', 'XOF', 'West African CFA Francs'], XAF = ['FCFA', 'XAF', 'Central African CFA Francs'],
+              XCD = ['EC$', 'XCD', 'East Caribbean Dollars'], AUD = ['A$', 'AUD', 'Australian Dollars'],
+              CHF = ['CHF', 'CHF', 'Swiss Francs'];
+        const currencyByCountry = {
+            AF:['؋','AFN','Afghan Afghanis'], AL:['L','ALL','Albanian Lek'], DZ:['DZD','DZD','Algerian Dinars'], AD:EUR,
+            AO:['Kz','AOA','Angolan Kwanzas'], AG:XCD, AR:['AR$','ARS','Argentine Pesos'], AM:['֏','AMD','Armenian Drams'],
+            AU:AUD, AT:EUR, AZ:['₼','AZN','Azerbaijani Manats'], BS:['B$','BSD','Bahamian Dollars'],
+            BH:['BD','BHD','Bahraini Dinars'], BD:['৳','BDT','Bangladeshi Taka'], BB:['Bds$','BBD','Barbadian Dollars'],
+            BY:['Br','BYN','Belarusian Rubles'], BE:EUR, BZ:['BZ$','BZD','Belize Dollars'], BJ:XOF,
+            BT:['Nu.','BTN','Bhutanese Ngultrum'], BO:['Bs.','BOB','Bolivian Bolivianos'], BA:['KM','BAM','Bosnia-Herzegovina Convertible Marks'],
+            BW:['P','BWP','Botswana Pula'], BR:['R$','BRL','Brazilian Reais'], BN:['B$','BND','Brunei Dollars'],
+            BG:EUR, BF:XOF, BI:['FBu','BIF','Burundian Francs'], CV:['Esc','CVE','Cape Verdean Escudos'],
+            KH:['៛','KHR','Cambodian Riels'], CM:XAF, CA:['CA$','CAD','Canadian Dollars'], CF:XAF, TD:XAF,
+            CL:['CL$','CLP','Chilean Pesos'], CN:['CN¥','CNY','Chinese Yuan'], CO:['COL$','COP','Colombian Pesos'],
+            KM:['CF','KMF','Comorian Francs'], CG:XAF, CD:['FC','CDF','Congolese Francs'], CR:['₡','CRC','Costa Rican Colones'],
+            HR:EUR, CU:['CUP$','CUP','Cuban Pesos'], CY:EUR, CZ:['Kč','CZK','Czech Koruna'], DK:['kr','DKK','Danish Kroner'],
+            DJ:['Fdj','DJF','Djiboutian Francs'], DM:XCD, DO:['RD$','DOP','Dominican Pesos'], EC:USD,
+            EG:['E£','EGP','Egyptian Pounds'], SV:USD, GQ:XAF, ER:['Nfk','ERN','Eritrean Nakfa'], EE:EUR,
+            SZ:['E','SZL','Eswatini Emalangeni'], ET:['Br','ETB','Ethiopian Birr'], FJ:['FJ$','FJD','Fijian Dollars'],
+            FI:EUR, FR:EUR, GA:XAF, GM:['D','GMD','Gambian Dalasis'], GE:['₾','GEL','Georgian Lari'], DE:EUR,
+            GH:['GH₵','GHS','Ghanaian Cedis'], GR:EUR, GD:XCD, GT:['Q','GTQ','Guatemalan Quetzales'], GN:['FG','GNF','Guinean Francs'],
+            GW:XOF, GY:['G$','GYD','Guyanese Dollars'], HT:['G','HTG','Haitian Gourdes'], HN:['L','HNL','Honduran Lempiras'],
+            HU:['Ft','HUF','Hungarian Forints'], IS:['kr','ISK','Icelandic Krónur'], IN:['₹','INR','Indian Rupees'],
+            ID:['Rp','IDR','Indonesian Rupiah'], IR:['IRR','IRR','Iranian Rials'], IQ:['IQD','IQD','Iraqi Dinars'], IE:EUR,
+            IL:['₪','ILS','Israeli Shekels'], IT:EUR, JM:['J$','JMD','Jamaican Dollars'], JP:['¥','JPY','Japanese Yen'],
+            JO:['JD','JOD','Jordanian Dinars'], KZ:['₸','KZT','Kazakhstani Tenge'], KE:['KSh','KES','Kenyan Shillings'],
+            KI:AUD, KP:['₩','KPW','North Korean Won'], KR:['₩','KRW','South Korean Won'], KW:['KD','KWD','Kuwaiti Dinars'],
+            KG:['с','KGS','Kyrgyzstani Som'], LA:['₭','LAK','Lao Kip'], LV:EUR, LB:['L£','LBP','Lebanese Pounds'],
+            LS:['L','LSL','Lesotho Loti'], LR:['L$','LRD','Liberian Dollars'], LY:['LD','LYD','Libyan Dinars'], LI:CHF,
+            LT:EUR, LU:EUR, MG:['Ar','MGA','Malagasy Ariary'], MW:['MK','MWK','Malawian Kwacha'], MY:['RM','MYR','Malaysian Ringgit'],
+            MV:['Rf','MVR','Maldivian Rufiyaa'], ML:XOF, MT:EUR, MH:USD, MR:['UM','MRU','Mauritanian Ouguiya'],
+            MU:['Rs','MUR','Mauritian Rupees'], MX:['MX$','MXN','Mexican Pesos'], FM:USD, MD:['L','MDL','Moldovan Leu'], MC:EUR,
+            MN:['₮','MNT','Mongolian Tugriks'], ME:EUR, MA:['MAD','MAD','Moroccan Dirhams'], MZ:['MT','MZN','Mozambican Meticais'],
+            MM:['K','MMK','Myanmar Kyat'], NA:['N$','NAD','Namibian Dollars'], NR:AUD, NP:['Rs','NPR','Nepalese Rupees'], NL:EUR,
+            NZ:['NZ$','NZD','New Zealand Dollars'], NI:['C$','NIO','Nicaraguan Córdobas'], NE:XOF, NG:['₦','NGN','Nigerian Naira'],
+            MK:['ден','MKD','Macedonian Denars'], NO:['kr','NOK','Norwegian Kroner'], OM:['OMR','OMR','Omani Rials'],
+            PK:['Rs','PKR','Pakistani Rupees'], PW:USD, PA:USD, PG:['K','PGK','Papua New Guinean Kina'],
+            PY:['₲','PYG','Paraguayan Guaraníes'], PE:['S/','PEN','Peruvian Soles'], PH:['₱','PHP','Philippine Pesos'],
+            PL:['zł','PLN','Polish Złoty'], PT:EUR, QA:['QR','QAR','Qatari Riyals'], RO:['lei','RON','Romanian Leu'],
+            RU:['₽','RUB','Russian Rubles'], RW:['FRw','RWF','Rwandan Francs'], KN:XCD, LC:XCD, VC:XCD,
+            WS:['WS$','WST','Samoan Tālā'], SM:EUR, ST:['Db','STN','São Tomé and Príncipe Dobras'], SA:['SAR','SAR','Saudi Riyals'],
+            SN:XOF, RS:['din','RSD','Serbian Dinars'], SC:['SR','SCR','Seychellois Rupees'], SL:['Le','SLE','Sierra Leonean Leones'],
+            SG:['S$','SGD','Singapore Dollars'], SK:EUR, SI:EUR, SB:['SI$','SBD','Solomon Islands Dollars'],
+            SO:['Sh','SOS','Somali Shillings'], ZA:['R','ZAR','South African Rand'], SS:['SSP','SSP','South Sudanese Pounds'],
+            ES:EUR, LK:['Rs','LKR','Sri Lankan Rupees'], SD:['SDG','SDG','Sudanese Pounds'], SR:['Sr$','SRD','Surinamese Dollars'],
+            SE:['kr','SEK','Swedish Kronor'], CH:CHF, SY:['SYP','SYP','Syrian Pounds'], TJ:['SM','TJS','Tajikistani Somoni'],
+            TZ:['TSh','TZS','Tanzanian Shillings'], TH:['฿','THB','Thai Baht'], TL:USD, TG:XOF, TO:['T$','TOP','Tongan Paʻanga'],
+            TT:['TT$','TTD','Trinidad and Tobago Dollars'], TN:['TND','TND','Tunisian Dinars'], TR:['₺','TRY','Turkish Lira'],
+            TM:['m','TMT','Turkmenistani Manat'], TV:AUD, UG:['USh','UGX','Ugandan Shillings'], UA:['₴','UAH','Ukrainian Hryvnia'],
+            AE:['AED','AED','UAE Dirhams'], GB:['£','GBP','British Pounds'], US:USD, UY:['$U','UYU','Uruguayan Pesos'],
+            UZ:['soʻm','UZS','Uzbekistani Som'], VU:['VT','VUV','Vanuatu Vatu'], VE:['Bs.S','VES','Venezuelan Bolívares'],
+            VN:['₫','VND','Vietnamese Dong'], YE:['YER','YER','Yemeni Rials'], ZM:['ZK','ZMW','Zambian Kwacha'],
+            ZW:['ZiG','ZWG','Zimbabwean ZiG']
+        };
+
+        const budgetInput = document.getElementById('budget');
+        const budgetSymbol = document.getElementById('budget-symbol');
+        const budgetLabelCode = document.getElementById('budget-label-code');
+        const budgetFormatted = document.getElementById('budget-formatted');
+        const budgetCurrency = document.getElementById('budget-currency');
+        let currentCurrency = currencyByCountry['IN'];
+
+        function updateBudgetField() {
+            const [symbol, iso, name] = currentCurrency;
+            const raw = budgetInput.value;
+            if (raw === '' || isNaN(Number(raw))) { budgetFormatted.value = ''; return; }
+            const amount = new Intl.NumberFormat(iso === 'INR' ? 'en-IN' : 'en-US', { maximumFractionDigits: 2 }).format(Number(raw));
+            // e.g. "$100 USD (American Dollars)" or "₹100 INR (Indian Rupees)"
+            budgetFormatted.value = `${symbol}${amount} ${iso} (${name})`;
+        }
+
+        function updateCurrency(countryCode) {
+            currentCurrency = currencyByCountry[countryCode] || ['', 'USD', 'American Dollars'];
+            const [symbol, iso] = currentCurrency;
+            budgetSymbol.textContent = symbol;
+            budgetLabelCode.textContent = iso;
+            budgetCurrency.value = iso;
+            // keep the typed number clear of the (variable-width) symbol
+            budgetInput.style.paddingLeft = (budgetSymbol.offsetWidth + 28) + 'px';
+            updateBudgetField();
+        }
+
+        budgetInput.addEventListener('input', updateBudgetField);
+        budgetInput.closest('form').addEventListener('submit', updateBudgetField);
+        updateCurrency('IN');
 
         document.addEventListener('click', (e) => {
             if (!dropdownBtn.contains(e.target) && !dropdownMenu.contains(e.target)) {
