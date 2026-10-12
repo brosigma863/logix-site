@@ -1081,10 +1081,35 @@
         animate3D();
 
         window.addEventListener('resize', () => {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        });
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+    </script>   <!-- ADD THIS: closes the first script -->
+
+    <!-- End of your form -->
+
+    <script>
+    document.getElementById('order-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+
+        try {
+            const response = await fetch("https://formsubmit.co/ajax/e4f326114c0b9523fcbf335caca62687", {
+                method: "POST",
+                body: formData
+            });
+
+            if (response.ok) {
+                window.location.href = "success.html";
+            } else {
+                alert("Submission failed. Please try again.");
+            }
+        } catch (error) {
+            console.error("Error:", error);
+            alert("An error occurred. Please check your connection.");
+        }
+    });
     </script>
 </body>
 </html>
