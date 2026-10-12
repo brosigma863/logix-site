@@ -24,76 +24,118 @@
                         serif: ['Playfair Display', 'serif'],
                     },
                     colors: {
-                        'logix-blue': '#005b9f', // Derived from the logo
+                        'logix-blue': '#005b9f', 
                         'logix-accent': '#00e5ff',
+                        'logix-dark': '#0a0f1c',
+                    },
+                    animation: {
+                        'blob': 'blob 10s infinite',
+                    },
+                    keyframes: {
+                        blob: {
+                            '0%': { transform: 'translate(0px, 0px) scale(1)' },
+                            '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+                            '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+                            '100%': { transform: 'translate(0px, 0px) scale(1)' },
+                        }
                     }
                 }
             }
         }
     </script>
 
+    <!-- Three.js & GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
     <style>
-        /* Custom scrollbar for gallery */
-        .hide-scrollbar::-webkit-scrollbar {
-            display: none;
+        html { scroll-behavior: smooth; background-color: #0a0f1c; }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #0a0f1c; }
+        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #00e5ff; }
+        
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* Immersive Scroll Reveal Classes */
+        .reveal {
+            opacity: 0;
+            transform: translateY(60px) scale(0.95);
+            transition: all 1s cubic-bezier(0.5, 0, 0, 1);
         }
-        .hide-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0) scale(1);
         }
         
-        /* Smooth scrolling */
-        html {
-            scroll-behavior: smooth;
+        /* 3D Tilt Elements Transition */
+        .tilt-effect {
+            transition: transform 0.1s ease-out;
+            transform-style: preserve-3d;
+            will-change: transform;
         }
 
-        /* Subtle image hover effect */
-        .img-hover-zoom {
-            overflow: hidden;
+        /* Glassmorphism Panels */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
         }
-        .img-hover-zoom img {
-            transition: transform 0.7s ease;
+
+        /* Glowing text effect */
+        .text-glow {
+            text-shadow: 0 0 30px rgba(0, 229, 255, 0.4);
         }
-        .img-hover-zoom:hover img {
-            transform: scale(1.05);
-        }
+
+        /* 3D Scrollytelling Section Specifics */
+        .innovation-section { height: 350vh; position: relative; z-index: 5; background: #0a0f1c; }
+        .sticky-3d-container { position: sticky; top: 0; height: 100vh; width: 100%; overflow: hidden; }
+        #webgl-canvas { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
+        .innovation-text-layer { position: absolute; inset: 0; display: flex; align-items: center; padding: 0 5vw; z-index: 10; pointer-events: none; }
     </style>
 </head>
-<body class="font-sans bg-gray-50 text-gray-900 antialiased selection:bg-logix-blue selection:text-white">
+<body class="font-sans text-gray-200 antialiased selection:bg-logix-accent selection:text-gray-900 overflow-x-hidden bg-logix-dark">
 
     <!-- Top Announcement Banner -->
-    <div class="bg-gray-900 text-white py-2.5 px-4 relative overflow-hidden text-center z-[60] text-sm">
-        <div class="absolute inset-0 bg-gradient-to-r from-transparent via-logix-accent/20 to-transparent pointer-events-none"></div>
+    <div class="bg-gradient-to-r from-blue-900 via-logix-dark to-blue-900 text-white py-2.5 px-4 relative overflow-hidden text-center z-[60] text-sm border-b border-white/10">
         <p class="relative z-10 font-medium">
-            <span class="text-logix-accent font-bold tracking-wider uppercase text-xs mr-2">Limited Time Offer</span> 
-            <span class="hidden sm:inline">Enjoy a 20% Discount on your first custom build order.</span>
-            <span class="sm:hidden">20% off your first custom order!</span>
-            <a href="#order" class="ml-2 inline-flex items-center hover:text-logix-accent transition-colors font-semibold underline decoration-logix-accent/50 underline-offset-2">
+            <span class="text-logix-accent font-bold tracking-wider uppercase text-xs mr-2 drop-shadow-md">Limited Time Offer</span> 
+            <span class="hidden sm:inline text-gray-300">Enjoy a 20% Discount on your first custom build order.</span>
+            <span class="sm:hidden text-gray-300">20% off your first custom order!</span>
+            <a href="#order" class="ml-2 inline-flex items-center hover:text-white text-logix-accent transition-colors font-semibold underline decoration-logix-accent/50 underline-offset-4">
                 Claim Now <svg class="w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
             </a>
         </p>
     </div>
 
-    <nav class="sticky top-0 bg-white/90 backdrop-blur-md z-50 border-b border-gray-200 transition-all duration-300" id="navbar">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-20">
+    <!-- Glassmorphic Navbar -->
+    <nav class="fixed top-[44px] w-full z-50 transition-all duration-500" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+            <div class="glass-panel rounded-2xl flex justify-between items-center h-16 px-6">
                 <!-- Logo -->
-                <div class="flex-shrink-0 flex items-center gap-3">
-                    <img src="logo.png" alt="Logix Logo" class="h-10 w-auto mix-blend-multiply">
-                    <span class="font-serif font-bold text-2xl tracking-wide text-gray-900">LOGIX</span>
+                <div class="flex-shrink-0 flex items-center gap-3 group cursor-pointer">
+                    <img src="logo.png" alt="Logix Logo" class="h-8 w-auto invert opacity-90 group-hover:opacity-100 transition-opacity">
+                    <span class="font-serif font-bold text-2xl tracking-wide text-white group-hover:text-logix-accent transition-colors">LOGIX</span>
                 </div>
                 
                 <!-- Desktop Menu -->
                 <div class="hidden md:flex space-x-8 items-center">
-                    <a href="#about" class="text-sm font-medium text-gray-600 hover:text-logix-blue uppercase tracking-wider transition-colors">About</a>
-                    <a href="#work" class="text-sm font-medium text-gray-600 hover:text-logix-blue uppercase tracking-wider transition-colors">Gadgets</a>
-                    <a href="#ideas" class="text-sm font-medium text-gray-600 hover:text-logix-blue uppercase tracking-wider transition-colors">Ideas</a>
-                    <a href="#order" class="px-5 py-2.5 bg-gray-900 text-white text-sm font-medium uppercase tracking-wider rounded hover:bg-logix-blue transition-colors shadow-sm">Order Now</a>
+                    <a href="#about" class="text-xs font-semibold text-gray-300 hover:text-logix-accent uppercase tracking-[0.2em] transition-all">About</a>
+                    <a href="#work" class="text-xs font-semibold text-gray-300 hover:text-logix-accent uppercase tracking-[0.2em] transition-all">Gadgets</a>
+                    <a href="#ideas" class="text-xs font-semibold text-gray-300 hover:text-logix-accent uppercase tracking-[0.2em] transition-all">Ideas</a>
+                    <a href="#order" class="px-5 py-2 bg-white text-gray-900 text-xs font-bold uppercase tracking-[0.1em] rounded-lg hover:bg-logix-accent hover:shadow-[0_0_20px_rgba(0,229,255,0.4)] transition-all">Order Now</a>
                 </div>
 
                 <!-- Mobile Menu Button -->
                 <div class="md:hidden flex items-center">
-                    <button id="mobile-menu-button" class="text-gray-600 hover:text-gray-900 focus:outline-none p-2">
+                    <button id="mobile-menu-button" class="text-gray-300 hover:text-white focus:outline-none">
                         <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
                         </svg>
@@ -103,52 +145,99 @@
         </div>
         
         <!-- Mobile Menu Panel -->
-        <div id="mobile-menu" class="md:hidden hidden bg-white border-t border-gray-100 absolute w-full shadow-lg">
-            <div class="px-4 pt-2 pb-6 space-y-2">
-                <a href="#about" class="block px-3 py-3 text-base font-medium text-gray-800 hover:bg-gray-50 rounded-md">About</a>
-                <a href="#work" class="block px-3 py-3 text-base font-medium text-gray-800 hover:bg-gray-50 rounded-md">Gadgets</a>
-                <a href="#ideas" class="block px-3 py-3 text-base font-medium text-gray-800 hover:bg-gray-50 rounded-md">Ideas</a>
-                <a href="#order" class="block px-3 py-3 text-base font-bold text-logix-blue hover:bg-gray-50 rounded-md">Order Now</a>
+        <div id="mobile-menu" class="md:hidden hidden absolute w-full px-4 mt-2">
+            <div class="glass-panel rounded-xl px-4 pt-2 pb-6 space-y-2 border border-white/10">
+                <a href="#about" class="block px-3 py-3 text-sm font-medium text-gray-200 hover:bg-white/5 rounded-md">About</a>
+                <a href="#work" class="block px-3 py-3 text-sm font-medium text-gray-200 hover:bg-white/5 rounded-md">Gadgets</a>
+                <a href="#ideas" class="block px-3 py-3 text-sm font-medium text-gray-200 hover:bg-white/5 rounded-md">Ideas</a>
+                <a href="#order" class="block px-3 py-3 text-sm font-bold text-logix-accent hover:bg-white/5 rounded-md">Order Now</a>
             </div>
         </div>
     </nav>
 
-    <header class="relative h-[85vh] w-full flex items-center justify-center overflow-hidden bg-gradient-to-br from-blue-950 via-gray-900 to-blue-900">
-        <!-- Interactive Canvas Animation Background -->
+    <!-- IMMERSIVE 2D HERO SECTION -->
+    <header class="relative h-screen w-full flex items-center justify-center overflow-hidden bg-logix-dark">
+        <!-- Animated Atmospheric Orbs -->
+        <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-logix-blue rounded-full mix-blend-screen filter blur-[100px] opacity-30 animate-blob"></div>
+        <div class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-900 rounded-full mix-blend-screen filter blur-[100px] opacity-30 animate-blob" style="animation-delay: 2s;"></div>
+        
+        <!-- 2D Canvas Network (Thick, bright, visible lines) -->
         <div class="absolute inset-0 z-0">
-            <canvas id="circuitCanvas" class="w-full h-full block opacity-70"></canvas>
-            <div class="absolute inset-0 bg-gradient-to-r from-gray-900/80 via-transparent to-transparent pointer-events-none"></div>
+            <canvas id="circuitCanvas" class="w-full h-full block opacity-80"></canvas>
+            <div class="absolute inset-0 bg-gradient-to-t from-logix-dark via-transparent to-logix-dark/80 pointer-events-none"></div>
         </div>
         
-        <!-- Hero Content -->
-        <div class="relative z-10 text-left px-6 sm:px-12 lg:px-24 w-full max-w-7xl mx-auto pointer-events-none">
-            <span class="block text-logix-accent font-medium tracking-widest uppercase mb-4 text-sm sm:text-base drop-shadow-md">Welcome to Logix</span>
-            <h1 class="font-serif text-4xl sm:text-5xl md:text-6xl lg:text-8xl text-white leading-tight mb-6 drop-shadow-lg">
+        <!-- Floating Hero Content -->
+        <div class="relative z-10 text-center px-6 w-full max-w-5xl mx-auto pointer-events-none transform perspective-1000">
+            <span class="inline-block px-4 py-1.5 rounded-full border border-logix-accent/30 bg-logix-accent/10 text-logix-accent font-medium tracking-widest uppercase mb-8 text-xs sm:text-sm backdrop-blur-md">Welcome to Logix</span>
+            
+            <h1 class="font-serif text-5xl sm:text-7xl md:text-8xl text-white leading-tight mb-6 drop-shadow-2xl">
                 Custom Gadgets.<br>
-                <span class="text-transparent bg-clip-text bg-gradient-to-r from-white to-logix-accent">Accessible to All.</span>
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-white via-blue-100 to-logix-accent text-glow">Accessible to All.</span>
             </h1>
-            <p class="text-gray-200 text-base sm:text-xl max-w-2xl mb-10 font-light leading-relaxed drop-shadow-md">
+            
+            <p class="text-gray-400 text-lg sm:text-xl max-w-2xl mx-auto mb-10 font-light leading-relaxed">
                 We engineer personalized technological solutions tailored to your unique needs, bridging the gap between imagination and reality.
             </p>
-            <a href="#order" class="pointer-events-auto inline-flex items-center justify-center px-8 py-4 text-base font-medium text-gray-900 bg-white rounded hover:bg-logix-accent hover:text-gray-900 transition-all duration-300 shadow-xl hover:shadow-2xl hover:-translate-y-1">
+            
+            <a href="#order" class="pointer-events-auto relative group inline-flex items-center justify-center px-8 py-4 text-base font-bold text-gray-900 bg-white rounded-lg transition-all duration-300 hover:scale-105">
+                <span class="absolute inset-0 w-full h-full rounded-lg bg-gradient-to-r from-logix-accent to-blue-400 opacity-0 group-hover:opacity-100 blur-lg transition-opacity duration-300 -z-10"></span>
                 Start Your Project
-                <svg class="ml-2 -mr-1 w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                <svg class="ml-2 -mr-1 w-5 h-5 group-hover:translate-x-1 transition-transform" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
             </a>
+        </div>
+        
+        <!-- Scroll indicator -->
+        <div class="absolute bottom-8 left-1/2 -translate-x-1/2 text-white/50 flex flex-col items-center animate-bounce z-10">
+            <span class="text-xs tracking-widest uppercase mb-2">Scroll</span>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
         </div>
     </header>
 
-    <section id="about" class="py-16 md:py-24 bg-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex flex-col md:flex-row items-center gap-10 md:gap-12 lg:gap-16">
-                <!-- Image Column -->
-                <div class="w-full md:w-2/5 lg:w-1/3 shrink-0 img-hover-zoom rounded-2xl shadow-xl overflow-hidden">
-                    <img src="about.jpg" alt="Detailed Circuit Board" class="w-full h-56 sm:h-64 object-cover">
+    <!-- 3D SCROLLYTELLING SECTION -->
+    <section id="innovation-trigger" class="innovation-section">
+        <div class="sticky-3d-container">
+            <div id="webgl-canvas"></div>
+            
+            <div class="innovation-text-layer">
+                <div class="max-w-xl w-full" id="innovation-text">
+                    <div class="inline-flex items-center gap-2 px-4 py-1.5 bg-white/5 border border-white/10 text-gray-300 rounded-full text-xs font-semibold tracking-widest uppercase mb-6 shadow-xl backdrop-blur-md">
+                        <span class="w-2 h-2 rounded-full bg-logix-accent animate-pulse"></span> Our Mission
+                    </div>
+                    <h2 class="font-serif text-5xl lg:text-7xl font-bold text-white leading-tight mb-6 drop-shadow-2xl">
+                        Innovation for <br><span class="text-logix-accent italic">Everyone.</span>
+                    </h2>
+                    <p class="text-xl md:text-2xl text-gray-300 leading-relaxed font-light mb-6 drop-shadow-lg">
+                        Integrating custom ESP32 architecture with sensory arrays. Watch your concepts physically engineer themselves.
+                    </p>
+                    <p class="text-base text-gray-400 leading-relaxed drop-shadow-lg mb-6">
+                        At Logix, we firmly believe that high-quality, custom-engineered gadgets shouldn't be an exclusive luxury. We dedicate ourselves to designing and building personalized technological solutions for everyday life. By streamlining our manufacturing process and focusing on practical design, we deliver exceptional quality at prices that make sense for individuals and small businesses alike.
+                    </p>
+                    
+                    <div id="3d-error-message" style="display:none; background-color: #ff3333; color: white; padding: 1.5rem; border-radius: 12px; margin-top: 2rem; border: 2px solid white; pointer-events: auto;">
+                        <h3 style="font-weight: bold; font-size: 1.25rem; margin-bottom: 0.5rem;">⚠️ Error Loading 3D Model</h3>
+                        <p>The browser cannot find <b>esp32.glb</b>. Make sure the file is in the exact same folder as this HTML file.</p>
+                    </div>
                 </div>
-                <!-- Text Column -->
-                <div class="w-full md:w-3/5 lg:w-2/3 space-y-6 md:space-y-8">
-                    <div class="inline-block px-4 py-1.5 bg-blue-50 text-logix-blue rounded-full text-sm font-semibold tracking-wide uppercase">Our Mission</div>
-                    <h2 class="font-serif text-4xl sm:text-5xl lg:text-6xl text-gray-900 leading-tight">Innovation for <br>Everyone.</h2>
-                    <p class="text-xl text-gray-600 leading-relaxed font-light">
+            </div>
+        </div>
+    </section>
+
+    <!-- TECHNOLOGY BUILT FOR REALITY ABOUT SECTION -->
+    <section id="about" class="py-24 relative z-20 bg-logix-dark border-t border-white/5">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row items-center gap-12 lg:gap-20 reveal">
+                <div class="w-full md:w-1/2 lg:w-5/12 shrink-0 tilt-effect relative group cursor-crosshair">
+                    <div class="absolute -inset-4 bg-gradient-to-r from-logix-blue to-logix-accent opacity-30 blur-2xl rounded-3xl group-hover:opacity-50 transition-opacity duration-500"></div>
+                    <img src="about.jpg" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'" alt="Detailed Circuit Board" class="w-full h-80 sm:h-96 object-cover rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] relative z-10 border border-white/10">
+                </div>
+                
+                <div class="w-full md:w-1/2 lg:w-7/12 space-y-8">
+                    <div class="inline-flex items-center gap-2 px-4 py-1.5 bg-white/5 border border-white/10 text-gray-300 rounded-full text-xs font-semibold tracking-widest uppercase">
+                        <span class="w-2 h-2 rounded-full bg-logix-accent animate-pulse"></span> Our Mission
+                    </div>
+                    <h2 class="font-serif text-5xl lg:text-6xl text-white leading-tight">Technology built <br><span class="text-logix-accent italic">for reality.</span></h2>
+                    <p class="text-xl text-gray-300 leading-relaxed font-light">
                         At Logix, we firmly believe that high-quality, custom-engineered gadgets shouldn't be an exclusive luxury.
                     </p>
                     <p class="text-base text-gray-500 leading-relaxed">
@@ -159,100 +248,139 @@
         </div>
     </section>
 
-    <section id="work" class="py-16 md:py-24 bg-gray-50 border-t border-gray-200">
+    <section id="work" class="py-24 relative overflow-hidden">
+        <!-- Background detail -->
+        <div class="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-b from-transparent via-white/[0.02] to-transparent -z-10"></div>
+        
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex flex-col md:flex-row-reverse items-center gap-10 md:gap-12 lg:gap-16">
-                <!-- Image Column -->
-                <div class="w-full md:w-2/5 lg:w-1/3 shrink-0 img-hover-zoom rounded-2xl shadow-xl overflow-hidden">
-                    <img src="gadgets.jpg" alt="Technician working on a gadget" class="w-full h-56 sm:h-64 object-cover">
+            <div class="flex flex-col md:flex-row-reverse items-center gap-12 lg:gap-20 reveal">
+                <!-- 3D Interactive Image Column -->
+                <div class="w-full md:w-1/2 lg:w-5/12 shrink-0 tilt-effect relative group cursor-crosshair">
+                    <div class="absolute -inset-4 bg-gradient-to-l from-logix-blue to-purple-500 opacity-30 blur-2xl rounded-3xl group-hover:opacity-50 transition-opacity duration-500"></div>
+                    <img src="gadgets.jpg" alt="Technician working on a gadget" class="w-full h-80 sm:h-96 object-cover rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] relative z-10 border border-white/10">
                 </div>
+                
                 <!-- Text Column -->
-                <div class="w-full md:w-3/5 lg:w-2/3 space-y-6 md:space-y-8">
-                    <div class="inline-block px-4 py-1.5 bg-gray-200 text-gray-800 rounded-full text-sm font-semibold tracking-wide uppercase">Our Craft</div>
-                    <h2 class="font-serif text-4xl sm:text-5xl lg:text-6xl text-gray-900 leading-tight">Made Exactly<br>for You.</h2>
-                    <p class="text-xl text-gray-600 leading-relaxed font-light">
+                <div class="w-full md:w-1/2 lg:w-7/12 space-y-8">
+                    <div class="inline-flex items-center gap-2 px-4 py-1.5 bg-white/5 border border-white/10 text-gray-300 rounded-full text-xs font-semibold tracking-widest uppercase">
+                        <span class="w-2 h-2 rounded-full bg-purple-500 animate-pulse"></span> Our Craft
+                    </div>
+                    <h2 class="font-serif text-5xl lg:text-7xl text-white leading-tight">Made Exactly<br><span class="text-gray-400 italic">for You.</span></h2>
+                    <p class="text-xl text-gray-300 leading-relaxed font-light">
                         We turn your concepts into tangible, functional devices ready for your hands.
                     </p>
-                    <ul class="space-y-4 mt-6">
-                        <li class="flex items-start">
-                            <svg class="h-6 w-6 text-logix-blue mr-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                            </svg>
-                            <span class="text-gray-700">Personalized smart home accessories</span>
-                        </li>
-                        <li class="flex items-start">
-                            <svg class="h-6 w-6 text-logix-blue mr-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                            </svg>
-                            <span class="text-gray-700">Unique workflow automation tools</span>
-                        </li>
-                        <li class="flex items-start">
-                            <svg class="h-6 w-6 text-logix-blue mr-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                            </svg>
-                            <span class="text-gray-700">Custom sensory and data collection devices</span>
-                        </li>
-                    </ul>
+                    
+                    <div class="space-y-6 mt-8">
+                        <!-- Immersive List Items -->
+                        <div class="glass-panel p-4 rounded-xl flex items-center transform transition-transform hover:translate-x-2">
+                            <div class="w-10 h-10 rounded-full bg-logix-accent/20 flex items-center justify-center mr-4 shrink-0 border border-logix-accent/30">
+                                <svg class="h-5 w-5 text-logix-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+                            </div>
+                            <span class="text-gray-200 font-medium">Personalized smart home accessories</span>
+                        </div>
+                        <div class="glass-panel p-4 rounded-xl flex items-center transform transition-transform hover:translate-x-2">
+                            <div class="w-10 h-10 rounded-full bg-logix-accent/20 flex items-center justify-center mr-4 shrink-0 border border-logix-accent/30">
+                                <svg class="h-5 w-5 text-logix-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+                            </div>
+                            <span class="text-gray-200 font-medium">Unique workflow automation tools</span>
+                        </div>
+                        <div class="glass-panel p-4 rounded-xl flex items-center transform transition-transform hover:translate-x-2">
+                            <div class="w-10 h-10 rounded-full bg-logix-accent/20 flex items-center justify-center mr-4 shrink-0 border border-logix-accent/30">
+                                <svg class="h-5 w-5 text-logix-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+                            </div>
+                            <span class="text-gray-200 font-medium">Custom sensory and data collection devices</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <section id="ideas" class="py-16 md:py-24 bg-white border-t border-gray-200 overflow-hidden">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12 text-center">
-            <h2 class="font-serif text-4xl sm:text-5xl text-gray-900 mb-4">Past Projects & Ideas</h2>
-            <p class="text-gray-500 max-w-2xl mx-auto">A glimpse into what we can build for you. Swipe to explore.</p>
+    <!-- 3D Card Gallery -->
+    <section id="ideas" class="py-24 relative overflow-hidden bg-black/20 border-y border-white/5">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16 text-center reveal">
+            <h2 class="font-serif text-4xl sm:text-6xl text-white mb-6">Past Projects & Ideas</h2>
+            <p class="text-gray-400 max-w-2xl mx-auto text-lg">A glimpse into what we can build for you. Swipe and hover to explore.</p>
         </div>
         
-        <!-- Horizontal scrolling gallery -->
-        <div class="flex overflow-x-auto gap-6 px-4 sm:px-8 md:px-16 pb-8 hide-scrollbar snap-x snap-mandatory">
-            <!-- Reusing the provided images for the gallery to ensure they load -->
-            <div class="flex-none w-80 sm:w-96 snap-center group relative rounded-xl overflow-hidden shadow-lg">
-                <img src="https://images.unsplash.com/photo-1581092160562-40aa08e78837?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Hardware Repair" class="w-full h-72 object-cover transition duration-500 group-hover:scale-110">
-                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
-                    <h3 class="text-white text-xl font-medium">Custom Logic Boards</h3>
+        <div class="flex overflow-x-auto gap-8 px-4 sm:px-8 md:px-16 pb-16 pt-8 hide-scrollbar snap-x snap-mandatory reveal">
+            <!-- Project Cards with Tilt -->
+            <div class="flex-none w-80 sm:w-96 snap-center relative tilt-effect cursor-pointer group">
+                <div class="h-80 w-full rounded-2xl overflow-hidden border border-white/10 shadow-2xl relative">
+                    <img src="https://images.unsplash.com/photo-1581092160562-40aa08e78837?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Hardware Repair" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                    <div class="absolute inset-0 bg-gradient-to-t from-logix-dark via-logix-dark/40 to-transparent opacity-80"></div>
+                    <div class="absolute inset-0 p-8 flex flex-col justify-end transform transition-transform duration-500 translate-y-4 group-hover:translate-y-0">
+                        <span class="text-logix-accent text-sm font-bold tracking-widest uppercase mb-2">Category 01</span>
+                        <h3 class="text-white text-2xl font-serif">Custom Logic Boards</h3>
+                    </div>
                 </div>
             </div>
-            <div class="flex-none w-80 sm:w-96 snap-center group relative rounded-xl overflow-hidden shadow-lg">
-                <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Circuit Design" class="w-full h-72 object-cover transition duration-500 group-hover:scale-110">
-                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
-                    <h3 class="text-white text-xl font-medium">Microcontroller Programming</h3>
+            
+            <div class="flex-none w-80 sm:w-96 snap-center relative tilt-effect cursor-pointer group">
+                <div class="h-80 w-full rounded-2xl overflow-hidden border border-white/10 shadow-2xl relative">
+                    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Circuit Design" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                    <div class="absolute inset-0 bg-gradient-to-t from-logix-dark via-logix-dark/40 to-transparent opacity-80"></div>
+                    <div class="absolute inset-0 p-8 flex flex-col justify-end transform transition-transform duration-500 translate-y-4 group-hover:translate-y-0">
+                        <span class="text-logix-accent text-sm font-bold tracking-widest uppercase mb-2">Category 02</span>
+                        <h3 class="text-white text-2xl font-serif">Microcontrollers</h3>
+                    </div>
                 </div>
             </div>
-            <div class="flex-none w-80 sm:w-96 snap-center group relative rounded-xl overflow-hidden shadow-lg">
-                <img src="https://images.unsplash.com/photo-1580894742597-87bc8789db3d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Prototyping" class="w-full h-72 object-cover transition duration-500 group-hover:scale-110">
-                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
-                    <h3 class="text-white text-xl font-medium">Rapid Prototyping</h3>
+            
+            <div class="flex-none w-80 sm:w-96 snap-center relative tilt-effect cursor-pointer group">
+                <div class="h-80 w-full rounded-2xl overflow-hidden border border-white/10 shadow-2xl relative">
+                    <img src="https://images.unsplash.com/photo-1580894742597-87bc8789db3d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Prototyping" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                    <div class="absolute inset-0 bg-gradient-to-t from-logix-dark via-logix-dark/40 to-transparent opacity-80"></div>
+                    <div class="absolute inset-0 p-8 flex flex-col justify-end transform transition-transform duration-500 translate-y-4 group-hover:translate-y-0">
+                        <span class="text-logix-accent text-sm font-bold tracking-widest uppercase mb-2">Category 03</span>
+                        <h3 class="text-white text-2xl font-serif">Rapid Prototyping</h3>
+                    </div>
                 </div>
             </div>
-             <div class="flex-none w-80 sm:w-96 snap-center group relative rounded-xl overflow-hidden shadow-lg">
-                <img src="https://images.unsplash.com/photo-1555664424-778a1e5e1b48?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Finished Product" class="w-full h-72 object-cover transition duration-500 group-hover:scale-110">
-                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
-                    <h3 class="text-white text-xl font-medium">Final Assembly</h3>
+            
+             <div class="flex-none w-80 sm:w-96 snap-center relative tilt-effect cursor-pointer group">
+                <div class="h-80 w-full rounded-2xl overflow-hidden border border-white/10 shadow-2xl relative">
+                    <img src="https://images.unsplash.com/photo-1555664424-778a1e5e1b48?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Finished Product" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                    <div class="absolute inset-0 bg-gradient-to-t from-logix-dark via-logix-dark/40 to-transparent opacity-80"></div>
+                    <div class="absolute inset-0 p-8 flex flex-col justify-end transform transition-transform duration-500 translate-y-4 group-hover:translate-y-0">
+                        <span class="text-logix-accent text-sm font-bold tracking-widest uppercase mb-2">Category 04</span>
+                        <h3 class="text-white text-2xl font-serif">Final Assembly</h3>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <section id="order" class="py-16 md:py-24 bg-gray-50 border-t border-gray-200">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col lg:flex-row">
+    <!-- Glassmorphic Order Section -->
+    <section id="order" class="py-24 relative reveal">
+        <!-- Colored Background Glow -->
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-logix-accent/20 rounded-full blur-[120px] -z-10 pointer-events-none"></div>
+
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="glass-panel rounded-3xl overflow-hidden flex flex-col lg:flex-row border border-white/10 shadow-[0_0_50px_rgba(0,0,0,0.5)]">
                 
                 <!-- Form Image Side -->
-                <div class="w-full lg:w-5/12 bg-gray-900 relative min-h-[300px] lg:min-h-full">
-                    <img src="order.jpg" alt="Prototyping setup" class="absolute inset-0 w-full h-full object-cover opacity-60 mix-blend-overlay">
+                <div class="w-full lg:w-5/12 relative min-h-[300px] lg:min-h-full border-r border-white/10">
+                    <img src="order.jpg" alt="Prototyping setup" class="absolute inset-0 w-full h-full object-cover opacity-50 mix-blend-overlay">
+                    <div class="absolute inset-0 bg-gradient-to-br from-logix-blue/80 to-logix-dark/90"></div>
+                    
                     <div class="absolute inset-0 p-12 flex flex-col justify-between z-10">
                         <div>
-                            <h3 class="font-serif text-3xl text-white mb-4">Let's build it.</h3>
-                            <p class="text-gray-300 text-lg">Tell us about your project, and our engineering team will get back to you with a feasibility report and quote.</p>
+                            <span class="inline-block px-3 py-1 rounded text-logix-accent bg-logix-accent/10 border border-logix-accent/20 text-xs font-bold tracking-widest uppercase mb-6">Start Here</span>
+                            <h3 class="font-serif text-4xl text-white mb-4 drop-shadow-md">Let's build it.</h3>
+                            <p class="text-gray-300 text-lg font-light leading-relaxed">Tell us about your project, and our engineering team will get back to you with a feasibility report and quote.</p>
                         </div>
-                        <div class="mt-8 space-y-4 text-gray-300">
-                            <div class="flex items-center">
-                                <svg class="w-5 h-5 mr-3 text-logix-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                        <div class="mt-8 space-y-6 text-gray-300">
+                            <div class="flex items-center group">
+                                <div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center mr-4 group-hover:bg-logix-accent transition-colors">
+                                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2-2v10a2 2 0 002 2z"></path></svg>
+                                </div>
                                 hello@logix-tech.com
                             </div>
-                            <div class="flex items-center">
-                                <svg class="w-5 h-5 mr-3 text-logix-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                            <div class="flex items-center group">
+                                <div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center mr-4 group-hover:bg-logix-accent transition-colors">
+                                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                                </div>
                                 New Delhi, India
                             </div>
                         </div>
@@ -260,70 +388,65 @@
                 </div>
 
                 <!-- Form Side -->
-                <div class="w-full lg:w-7/12 p-8 sm:p-12 lg:p-16">
-                    <h2 class="text-3xl font-serif font-bold text-gray-900 mb-2">Request a Quote</h2>
-                    <p class="text-sm text-gray-500 mb-8"><span class="text-red-500">*</span> indicates a required field.</p>
+                <div class="w-full lg:w-7/12 p-8 sm:p-12 lg:p-16 bg-white/[0.02]">
+                    <h2 class="text-3xl font-serif font-bold text-white mb-2">Request a Quote</h2>
+                    <p class="text-sm text-gray-400 mb-8"><span class="text-logix-accent">*</span> indicates a required field.</p>
                     
                     <form action="https://formsubmit.co/brosigma863@gmail.com" method="POST" class="space-y-8">
-                        <!-- Redirect after submission to the new success page -->
                         <input type="hidden" name="_next" value="success.html">
                         <input type="hidden" name="_subject" value="New Order Inquiry - Logix">
                         <input type="hidden" name="_captcha" value="false">
 
                         <!-- Project Description -->
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2" for="project">
-                                Describe your custom gadget idea <span class="text-red-500">*</span>
+                        <div class="relative group">
+                            <label class="block text-xs font-semibold tracking-widest text-gray-400 uppercase mb-2 transition-colors group-focus-within:text-logix-accent" for="project">
+                                Describe your custom gadget idea <span class="text-logix-accent">*</span>
                             </label>
                             <textarea 
                                 id="project" 
                                 name="Project" 
                                 rows="4" 
-                                class="w-full px-0 py-3 bg-transparent border-0 border-b-2 border-gray-300 focus:border-gray-900 focus:ring-0 text-gray-900 text-base placeholder-gray-400 resize-none transition-colors" 
-                                placeholder="E.g., I need a battery-powered sensor that detects moisture and alerts my phone..." 
+                                class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:border-logix-accent focus:bg-white/10 focus:ring-0 text-white text-base placeholder-gray-600 resize-none transition-all" 
+                                placeholder="E.g., I need a battery-powered sensor..." 
                                 required></textarea>
                         </div>
                         
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                             <!-- Email -->
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2" for="email">
-                                    Email Address (Optional)
+                            <div class="relative group">
+                                <label class="block text-xs font-semibold tracking-widest text-gray-400 uppercase mb-2 transition-colors group-focus-within:text-logix-accent" for="email">
+                                    Email Address
                                 </label>
                                 <input 
                                     type="email" 
                                     id="email" 
                                     name="Email" 
-                                    class="w-full px-0 py-3 bg-transparent border-0 border-b-2 border-gray-300 focus:border-gray-900 focus:ring-0 text-gray-900 text-base placeholder-gray-400 transition-colors" 
+                                    class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:border-logix-accent focus:bg-white/10 focus:ring-0 text-white text-base placeholder-gray-600 transition-all" 
                                     placeholder="you@example.com">
                             </div>
 
                             <!-- Phone -->
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2" for="phone">
-                                    Phone Number <span class="text-red-500">*</span>
+                            <div class="relative group">
+                                <label class="block text-xs font-semibold tracking-widest text-gray-400 uppercase mb-2 transition-colors group-focus-within:text-logix-accent" for="phone">
+                                    Phone Number <span class="text-logix-accent">*</span>
                                 </label>
                                 <div class="flex relative w-full" id="phone-input-group">
-                                    <!-- Custom Dropdown Trigger -->
-                                    <button type="button" id="country-dropdown-btn" class="flex items-center gap-2 bg-gray-50 border-0 border-b-2 border-gray-300 focus:border-gray-900 focus:ring-0 py-3 pl-3 pr-2 text-gray-700 text-base transition-colors rounded-tl-md hover:bg-gray-100">
+                                    <button type="button" id="country-dropdown-btn" class="flex items-center gap-2 bg-white/10 border border-white/10 py-3 pl-3 pr-2 text-white text-base transition-colors rounded-l-lg hover:bg-white/20">
                                         <img src="https://flagcdn.com/w20/in.png" alt="IN" class="w-5 h-auto object-contain" id="selected-flag">
                                         <span id="selected-code">+91</span>
                                         <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                                     </button>
-                                    
-                                    <!-- Hidden Input for Form Submission -->
                                     <input type="hidden" name="CountryCode" id="country-code-input" value="+91">
 
-                                    <!-- Custom Dropdown Menu -->
-                                    <div id="country-dropdown-menu" class="hidden absolute top-full left-0 mt-1 w-full max-h-60 overflow-y-auto bg-white border border-gray-200 rounded-md shadow-lg z-50">
-                                        <!-- Javascript will populate this -->
+                                    <div id="country-dropdown-menu" class="hidden absolute top-full left-0 mt-2 w-full max-h-60 overflow-y-auto glass-panel rounded-lg shadow-2xl z-50">
+                                        <!-- JS populates -->
                                     </div>
 
                                     <input 
                                         type="tel" 
                                         id="phone" 
                                         name="Phone" 
-                                        class="flex-1 w-full px-3 py-3 bg-transparent border-0 border-b-2 border-gray-300 focus:border-gray-900 focus:ring-0 text-gray-900 text-base placeholder-gray-400 transition-colors" 
+                                        class="flex-1 w-full px-4 py-3 bg-white/5 border border-l-0 border-white/10 rounded-r-lg focus:border-logix-accent focus:bg-white/10 focus:ring-0 text-white text-base placeholder-gray-600 transition-all" 
                                         placeholder="12345 67890" 
                                         required>
                                 </div>
@@ -331,18 +454,18 @@
                         </div>
 
                         <!-- Budget -->
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2" for="budget">
-                                Estimated Budget (INR) <span class="text-red-500">*</span>
+                        <div class="relative group">
+                            <label class="block text-xs font-semibold tracking-widest text-gray-400 uppercase mb-2 transition-colors group-focus-within:text-logix-accent" for="budget">
+                                Estimated Budget (INR) <span class="text-logix-accent">*</span>
                             </label>
                             <div class="relative flex items-center">
-                                <span class="absolute left-0 top-1/2 -translate-y-1/2 text-gray-500 font-serif text-xl">₹</span>
+                                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-serif text-xl">₹</span>
                                 <input 
                                     type="number" 
                                     id="budget" 
                                     name="Budget" 
                                     min="0"
-                                    class="w-full pl-6 py-3 bg-transparent border-0 border-b-2 border-gray-300 focus:border-gray-900 focus:ring-0 text-gray-900 text-base sm:text-lg placeholder-gray-400 transition-colors" 
+                                    class="w-full pl-10 pr-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:border-logix-accent focus:bg-white/10 focus:ring-0 text-white text-base sm:text-lg placeholder-gray-600 transition-all" 
                                     placeholder="5000" 
                                     required>
                             </div>
@@ -350,8 +473,9 @@
 
                         <!-- Submit Button -->
                         <div class="pt-4">
-                            <button type="submit" class="w-full sm:w-auto px-8 py-4 bg-gray-900 text-white font-medium tracking-wide uppercase rounded hover:bg-logix-blue focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors shadow-lg">
-                                Submit Request
+                            <button type="submit" class="w-full relative group overflow-hidden px-8 py-4 bg-white text-gray-900 font-bold tracking-[0.1em] uppercase rounded-lg transition-all duration-300 hover:text-white shadow-[0_0_20px_rgba(255,255,255,0.1)]">
+                                <span class="absolute inset-0 w-full h-full bg-gradient-to-r from-logix-blue to-logix-accent opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10"></span>
+                                <span class="relative z-10">Submit Request</span>
                             </button>
                         </div>
                     </form>
@@ -360,260 +484,81 @@
         </div>
     </section>
 
-    <footer class="bg-white py-12 border-t border-gray-200">
+    <footer class="border-t border-white/10 py-12 relative bg-black/40">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center">
-            <div class="flex items-center gap-2 mb-4 md:mb-0">
-                <img src="logo.png" alt="Logix Logo" class="h-8 w-auto mix-blend-multiply opacity-75 grayscale">
-                <span class="font-serif font-bold text-lg text-gray-500">LOGIX</span>
+            <div class="flex items-center gap-3 mb-4 md:mb-0 opacity-50 hover:opacity-100 transition-opacity">
+                <img src="logo.png" alt="Logix Logo" class="h-6 w-auto invert">
+                <span class="font-serif font-bold text-lg text-white">LOGIX</span>
             </div>
-            <p class="text-sm text-gray-400 uppercase tracking-wider">
+            <p class="text-xs text-gray-500 uppercase tracking-[0.2em]">
                 &copy; <span id="current-year"></span> LOGIX TECHNOLOGIES. ALL RIGHTS RESERVED.
             </p>
         </div>
     </footer>
 
     <script>
+        // Footer Year
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+
+        // Mobile Menu Logic
+        const btn = document.getElementById('mobile-menu-button');
+        const menu = document.getElementById('mobile-menu');
+        btn.addEventListener('click', () => menu.classList.toggle('hidden'));
+        menu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => menu.classList.add('hidden'));
+        });
+
+        // Glass Navbar Scroll Effect
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 20) {
+                navbar.classList.replace('top-[44px]', 'top-2');
+            } else {
+                navbar.classList.replace('top-2', 'top-[44px]');
+            }
+        });
+
+        // Interactive 3D Tilt Effect for Elements
+        document.querySelectorAll('.tilt-effect').forEach(element => {
+            element.addEventListener('mousemove', (e) => {
+                const rect = element.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                
+                const rotateX = ((y - centerY) / centerY) * -10; 
+                const rotateY = ((x - centerX) / centerX) * 10;
+                
+                element.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+            });
+            
+            element.addEventListener('mouseleave', () => {
+                element.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
+            });
+        });
+
+        // Intersection Observer for Scroll Reveals
+        const revealElements = document.querySelectorAll('.reveal');
+        const revealOptions = { threshold: 0.15, rootMargin: "0px 0px -50px 0px" };
+        
+        const revealOnScroll = new IntersectionObserver(function(entries, observer) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, revealOptions);
+        
+        revealElements.forEach(el => revealOnScroll.observe(el));
+
+        // Form Country Dropdown
         const countryData = [
-            { code: 'AF', name: 'Afghanistan', dial: '+93' },
-            { code: 'AL', name: 'Albania', dial: '+355' },
-            { code: 'DZ', name: 'Algeria', dial: '+213' },
-            { code: 'AS', name: 'American Samoa', dial: '+1-684' },
-            { code: 'AD', name: 'Andorra', dial: '+376' },
-            { code: 'AO', name: 'Angola', dial: '+244' },
-            { code: 'AI', name: 'Anguilla', dial: '+1-264' },
-            { code: 'AG', name: 'Antigua and Barbuda', dial: '+1-268' },
-            { code: 'AR', name: 'Argentina', dial: '+54' },
-            { code: 'AM', name: 'Armenia', dial: '+374' },
-            { code: 'AW', name: 'Aruba', dial: '+297' },
-            { code: 'AU', name: 'Australia', dial: '+61' },
-            { code: 'AT', name: 'Austria', dial: '+43' },
-            { code: 'AZ', name: 'Azerbaijan', dial: '+994' },
-            { code: 'BS', name: 'Bahamas', dial: '+1-242' },
-            { code: 'BH', name: 'Bahrain', dial: '+973' },
-            { code: 'BD', name: 'Bangladesh', dial: '+880' },
-            { code: 'BB', name: 'Barbados', dial: '+1-246' },
-            { code: 'BY', name: 'Belarus', dial: '+375' },
-            { code: 'BE', name: 'Belgium', dial: '+32' },
-            { code: 'BZ', name: 'Belize', dial: '+501' },
-            { code: 'BJ', name: 'Benin', dial: '+229' },
-            { code: 'BM', name: 'Bermuda', dial: '+1-441' },
-            { code: 'BT', name: 'Bhutan', dial: '+975' },
-            { code: 'BO', name: 'Bolivia', dial: '+591' },
-            { code: 'BA', name: 'Bosnia and Herzegovina', dial: '+387' },
-            { code: 'BW', name: 'Botswana', dial: '+267' },
-            { code: 'BR', name: 'Brazil', dial: '+55' },
-            { code: 'IO', name: 'British Indian Ocean Territory', dial: '+246' },
-            { code: 'VG', name: 'British Virgin Islands', dial: '+1-284' },
-            { code: 'BN', name: 'Brunei', dial: '+673' },
-            { code: 'BG', name: 'Bulgaria', dial: '+359' },
-            { code: 'BF', name: 'Burkina Faso', dial: '+226' },
-            { code: 'BI', name: 'Burundi', dial: '+257' },
-            { code: 'KH', name: 'Cambodia', dial: '+855' },
-            { code: 'CM', name: 'Cameroon', dial: '+237' },
-            { code: 'CA', name: 'Canada', dial: '+1' },
-            { code: 'CV', name: 'Cape Verde', dial: '+238' },
-            { code: 'KY', name: 'Cayman Islands', dial: '+1-345' },
-            { code: 'CF', name: 'Central African Republic', dial: '+236' },
-            { code: 'TD', name: 'Chad', dial: '+235' },
-            { code: 'CL', name: 'Chile', dial: '+56' },
-            { code: 'CN', name: 'China', dial: '+86' },
-            { code: 'CX', name: 'Christmas Island', dial: '+61' },
-            { code: 'CC', name: 'Cocos Islands', dial: '+61' },
-            { code: 'CO', name: 'Colombia', dial: '+57' },
-            { code: 'KM', name: 'Comoros', dial: '+269' },
-            { code: 'CK', name: 'Cook Islands', dial: '+682' },
-            { code: 'CR', name: 'Costa Rica', dial: '+506' },
-            { code: 'HR', name: 'Croatia', dial: '+385' },
-            { code: 'CU', name: 'Cuba', dial: '+53' },
-            { code: 'CW', name: 'Curacao', dial: '+599' },
-            { code: 'CY', name: 'Cyprus', dial: '+357' },
-            { code: 'CZ', name: 'Czech Republic', dial: '+420' },
-            { code: 'CD', name: 'Democratic Republic of the Congo', dial: '+243' },
-            { code: 'DK', name: 'Denmark', dial: '+45' },
-            { code: 'DJ', name: 'Djibouti', dial: '+253' },
-            { code: 'DM', name: 'Dominica', dial: '+1-767' },
-            { code: 'DO', name: 'Dominican Republic', dial: '+1-809' },
-            { code: 'EC', name: 'Ecuador', dial: '+593' },
-            { code: 'EG', name: 'Egypt', dial: '+20' },
-            { code: 'SV', name: 'El Salvador', dial: '+503' },
-            { code: 'GQ', name: 'Equatorial Guinea', dial: '+240' },
-            { code: 'ER', name: 'Eritrea', dial: '+291' },
-            { code: 'EE', name: 'Estonia', dial: '+372' },
-            { code: 'ET', name: 'Ethiopia', dial: '+251' },
-            { code: 'FK', name: 'Falkland Islands', dial: '+500' },
-            { code: 'FO', name: 'Faroe Islands', dial: '+298' },
-            { code: 'FJ', name: 'Fiji', dial: '+679' },
-            { code: 'FI', name: 'Finland', dial: '+358' },
-            { code: 'FR', name: 'France', dial: '+33' },
-            { code: 'GF', name: 'French Guiana', dial: '+594' },
-            { code: 'PF', name: 'French Polynesia', dial: '+689' },
-            { code: 'GA', name: 'Gabon', dial: '+241' },
-            { code: 'GM', name: 'Gambia', dial: '+220' },
-            { code: 'GE', name: 'Georgia', dial: '+995' },
-            { code: 'DE', name: 'Germany', dial: '+49' },
-            { code: 'GH', name: 'Ghana', dial: '+233' },
-            { code: 'GI', name: 'Gibraltar', dial: '+350' },
-            { code: 'GR', name: 'Greece', dial: '+30' },
-            { code: 'GL', name: 'Greenland', dial: '+299' },
-            { code: 'GD', name: 'Grenada', dial: '+1-473' },
-            { code: 'GP', name: 'Guadeloupe', dial: '+590' },
-            { code: 'GU', name: 'Guam', dial: '+1-671' },
-            { code: 'GT', name: 'Guatemala', dial: '+502' },
-            { code: 'GG', name: 'Guernsey', dial: '+44-1481' },
-            { code: 'GN', name: 'Guinea', dial: '+224' },
-            { code: 'GW', name: 'Guinea-Bissau', dial: '+245' },
-            { code: 'GY', name: 'Guyana', dial: '+592' },
-            { code: 'HT', name: 'Haiti', dial: '+509' },
-            { code: 'HN', name: 'Honduras', dial: '+504' },
-            { code: 'HK', name: 'Hong Kong', dial: '+852' },
-            { code: 'HU', name: 'Hungary', dial: '+36' },
-            { code: 'IS', name: 'Iceland', dial: '+354' },
             { code: 'IN', name: 'India', dial: '+91' },
-            { code: 'ID', name: 'Indonesia', dial: '+62' },
-            { code: 'IR', name: 'Iran', dial: '+98' },
-            { code: 'IQ', name: 'Iraq', dial: '+964' },
-            { code: 'IE', name: 'Ireland', dial: '+353' },
-            { code: 'IM', name: 'Isle of Man', dial: '+44-1624' },
-            { code: 'IL', name: 'Israel', dial: '+972' },
-            { code: 'IT', name: 'Italy', dial: '+39' },
-            { code: 'CI', name: 'Ivory Coast', dial: '+225' },
-            { code: 'JM', name: 'Jamaica', dial: '+1-876' },
-            { code: 'JP', name: 'Japan', dial: '+81' },
-            { code: 'JE', name: 'Jersey', dial: '+44-1534' },
-            { code: 'JO', name: 'Jordan', dial: '+962' },
-            { code: 'KZ', name: 'Kazakhstan', dial: '+7' },
-            { code: 'KE', name: 'Kenya', dial: '+254' },
-            { code: 'KI', name: 'Kiribati', dial: '+686' },
-            { code: 'XK', name: 'Kosovo', dial: '+383' },
-            { code: 'KW', name: 'Kuwait', dial: '+965' },
-            { code: 'KG', name: 'Kyrgyzstan', dial: '+996' },
-            { code: 'LA', name: 'Laos', dial: '+856' },
-            { code: 'LV', name: 'Latvia', dial: '+371' },
-            { code: 'LB', name: 'Lebanon', dial: '+961' },
-            { code: 'LS', name: 'Lesotho', dial: '+266' },
-            { code: 'LR', name: 'Liberia', dial: '+231' },
-            { code: 'LY', name: 'Libya', dial: '+218' },
-            { code: 'LI', name: 'Liechtenstein', dial: '+423' },
-            { code: 'LT', name: 'Lithuania', dial: '+370' },
-            { code: 'LU', name: 'Luxembourg', dial: '+352' },
-            { code: 'MO', name: 'Macao', dial: '+853' },
-            { code: 'MK', name: 'Macedonia', dial: '+389' },
-            { code: 'MG', name: 'Madagascar', dial: '+261' },
-            { code: 'MW', name: 'Malawi', dial: '+265' },
-            { code: 'MY', name: 'Malaysia', dial: '+60' },
-            { code: 'MV', name: 'Maldives', dial: '+960' },
-            { code: 'ML', name: 'Mali', dial: '+223' },
-            { code: 'MT', name: 'Malta', dial: '+356' },
-            { code: 'MH', name: 'Marshall Islands', dial: '+692' },
-            { code: 'MQ', name: 'Martinique', dial: '+596' },
-            { code: 'MR', name: 'Mauritania', dial: '+222' },
-            { code: 'MU', name: 'Mauritius', dial: '+230' },
-            { code: 'YT', name: 'Mayotte', dial: '+262' },
-            { code: 'MX', name: 'Mexico', dial: '+52' },
-            { code: 'FM', name: 'Micronesia', dial: '+691' },
-            { code: 'MD', name: 'Moldova', dial: '+373' },
-            { code: 'MC', name: 'Monaco', dial: '+377' },
-            { code: 'MN', name: 'Mongolia', dial: '+976' },
-            { code: 'ME', name: 'Montenegro', dial: '+382' },
-            { code: 'MS', name: 'Montserrat', dial: '+1-664' },
-            { code: 'MA', name: 'Morocco', dial: '+212' },
-            { code: 'MZ', name: 'Mozambique', dial: '+258' },
-            { code: 'MM', name: 'Myanmar', dial: '+95' },
-            { code: 'NA', name: 'Namibia', dial: '+264' },
-            { code: 'NR', name: 'Nauru', dial: '+674' },
-            { code: 'NP', name: 'Nepal', dial: '+977' },
-            { code: 'NL', name: 'Netherlands', dial: '+31' },
-            { code: 'NC', name: 'New Caledonia', dial: '+687' },
-            { code: 'NZ', name: 'New Zealand', dial: '+64' },
-            { code: 'NI', name: 'Nicaragua', dial: '+505' },
-            { code: 'NE', name: 'Niger', dial: '+227' },
-            { code: 'NG', name: 'Nigeria', dial: '+234' },
-            { code: 'NU', name: 'Niue', dial: '+683' },
-            { code: 'KP', name: 'North Korea', dial: '+850' },
-            { code: 'MP', name: 'Northern Mariana Islands', dial: '+1-670' },
-            { code: 'NO', name: 'Norway', dial: '+47' },
-            { code: 'OM', name: 'Oman', dial: '+968' },
-            { code: 'PK', name: 'Pakistan', dial: '+92' },
-            { code: 'PW', name: 'Palau', dial: '+680' },
-            { code: 'PS', name: 'Palestinian Territory', dial: '+970' },
-            { code: 'PA', name: 'Panama', dial: '+507' },
-            { code: 'PG', name: 'Papua New Guinea', dial: '+675' },
-            { code: 'PY', name: 'Paraguay', dial: '+595' },
-            { code: 'PE', name: 'Peru', dial: '+51' },
-            { code: 'PH', name: 'Philippines', dial: '+63' },
-            { code: 'PN', name: 'Pitcairn', dial: '+64' },
-            { code: 'PL', name: 'Poland', dial: '+48' },
-            { code: 'PT', name: 'Portugal', dial: '+351' },
-            { code: 'PR', name: 'Puerto Rico', dial: '+1-787' },
-            { code: 'QA', name: 'Qatar', dial: '+974' },
-            { code: 'CG', name: 'Republic of the Congo', dial: '+242' },
-            { code: 'RE', name: 'Reunion', dial: '+262' },
-            { code: 'RO', name: 'Romania', dial: '+40' },
-            { code: 'RU', name: 'Russia', dial: '+7' },
-            { code: 'RW', name: 'Rwanda', dial: '+250' },
-            { code: 'BL', name: 'Saint Barthelemy', dial: '+590' },
-            { code: 'SH', name: 'Saint Helena', dial: '+290' },
-            { code: 'KN', name: 'Saint Kitts and Nevis', dial: '+1-869' },
-            { code: 'LC', name: 'Saint Lucia', dial: '+1-758' },
-            { code: 'MF', name: 'Saint Martin', dial: '+590' },
-            { code: 'PM', name: 'Saint Pierre and Miquelon', dial: '+508' },
-            { code: 'VC', name: 'Saint Vincent and the Grenadines', dial: '+1-784' },
-            { code: 'WS', name: 'Samoa', dial: '+685' },
-            { code: 'SM', name: 'San Marino', dial: '+378' },
-            { code: 'ST', name: 'Sao Tome and Principe', dial: '+239' },
-            { code: 'SA', name: 'Saudi Arabia', dial: '+966' },
-            { code: 'SN', name: 'Senegal', dial: '+221' },
-            { code: 'RS', name: 'Serbia', dial: '+381' },
-            { code: 'SC', name: 'Seychelles', dial: '+248' },
-            { code: 'SL', name: 'Sierra Leone', dial: '+232' },
-            { code: 'SG', name: 'Singapore', dial: '+65' },
-            { code: 'SX', name: 'Sint Maarten', dial: '+1-721' },
-            { code: 'SK', name: 'Slovakia', dial: '+421' },
-            { code: 'SI', name: 'Slovenia', dial: '+386' },
-            { code: 'SB', name: 'Solomon Islands', dial: '+677' },
-            { code: 'SO', name: 'Somalia', dial: '+252' },
-            { code: 'ZA', name: 'South Africa', dial: '+27' },
-            { code: 'KR', name: 'South Korea', dial: '+82' },
-            { code: 'SS', name: 'South Sudan', dial: '+211' },
-            { code: 'ES', name: 'Spain', dial: '+34' },
-            { code: 'LK', name: 'Sri Lanka', dial: '+94' },
-            { code: 'SD', name: 'Sudan', dial: '+249' },
-            { code: 'SR', name: 'Suriname', dial: '+597' },
-            { code: 'SJ', name: 'Svalbard and Jan Mayen', dial: '+47' },
-            { code: 'SZ', name: 'Swaziland', dial: '+268' },
-            { code: 'SE', name: 'Sweden', dial: '+46' },
-            { code: 'CH', name: 'Switzerland', dial: '+41' },
-            { code: 'SY', name: 'Syria', dial: '+963' },
-            { code: 'TW', name: 'Taiwan', dial: '+886' },
-            { code: 'TJ', name: 'Tajikistan', dial: '+992' },
-            { code: 'TZ', name: 'Tanzania', dial: '+255' },
-            { code: 'TH', name: 'Thailand', dial: '+66' },
-            { code: 'TG', name: 'Togo', dial: '+228' },
-            { code: 'TK', name: 'Tokelau', dial: '+690' },
-            { code: 'TO', name: 'Tonga', dial: '+676' },
-            { code: 'TT', name: 'Trinidad and Tobago', dial: '+1-868' },
-            { code: 'TN', name: 'Tunisia', dial: '+216' },
-            { code: 'TR', name: 'Turkey', dial: '+90' },
-            { code: 'TM', name: 'Turkmenistan', dial: '+993' },
-            { code: 'TC', name: 'Turks and Caicos Islands', dial: '+1-649' },
-            { code: 'TV', name: 'Tuvalu', dial: '+688' },
-            { code: 'VI', name: 'U.S. Virgin Islands', dial: '+1-340' },
-            { code: 'UG', name: 'Uganda', dial: '+256' },
-            { code: 'UA', name: 'Ukraine', dial: '+380' },
-            { code: 'AE', name: 'United Arab Emirates', dial: '+971' },
-            { code: 'GB', name: 'United Kingdom', dial: '+44' },
             { code: 'US', name: 'United States', dial: '+1' },
-            { code: 'UY', name: 'Uruguay', dial: '+598' },
-            { code: 'UZ', name: 'Uzbekistan', dial: '+998' },
-            { code: 'VU', name: 'Vanuatu', dial: '+678' },
-            { code: 'VA', name: 'Vatican', dial: '+379' },
-            { code: 'VE', name: 'Venezuela', dial: '+58' },
-            { code: 'VN', name: 'Vietnam', dial: '+84' },
-            { code: 'WF', name: 'Wallis and Futuna', dial: '+681' },
-            { code: 'EH', name: 'Western Sahara', dial: '+212' },
-            { code: 'YE', name: 'Yemen', dial: '+967' },
-            { code: 'ZM', name: 'Zambia', dial: '+260' },
-            { code: 'ZW', name: 'Zimbabwe', dial: '+263' }
+            { code: 'GB', name: 'United Kingdom', dial: '+44' }
         ];
 
         const dropdownBtn = document.getElementById('country-dropdown-btn');
@@ -622,17 +567,15 @@
         const selectedCode = document.getElementById('selected-code');
         const countryCodeInput = document.getElementById('country-code-input');
         
-        // Populate custom dropdown
         countryData.forEach(country => {
             const option = document.createElement('div');
-            option.className = 'flex items-center px-4 py-3 hover:bg-gray-100 cursor-pointer text-base text-gray-700 transition-colors';
-            // Use flagcdn for reliable images across OS
+            option.className = 'flex items-center px-4 py-3 hover:bg-white/10 cursor-pointer text-sm text-gray-200 transition-colors border-b border-white/5 last:border-0';
             const imgUrl = `https://flagcdn.com/w20/${country.code.toLowerCase()}.png`;
             
             option.innerHTML = `
                 <img src="${imgUrl}" alt="${country.code}" class="w-5 h-auto object-contain mr-3">
                 <span class="flex-1 truncate">${country.name}</span>
-                <span class="text-gray-500 font-medium">${country.dial}</span>
+                <span class="text-gray-400 font-medium">${country.dial}</span>
             `;
             
             option.addEventListener('click', () => {
@@ -646,66 +589,47 @@
             dropdownMenu.appendChild(option);
         });
 
-        // Toggle dropdown
         dropdownBtn.addEventListener('click', (e) => {
-            e.stopPropagation(); // Prevent document click from immediately closing
+            e.stopPropagation();
             dropdownMenu.classList.toggle('hidden');
         });
 
-        // Close dropdown when clicking outside
         document.addEventListener('click', (e) => {
             if (!dropdownBtn.contains(e.target) && !dropdownMenu.contains(e.target)) {
                 dropdownMenu.classList.add('hidden');
             }
         });
 
+        // ==========================================
+        // 2D CANVAS NETWORK ANIMATION (Hero)
+        // ==========================================
         const canvas = document.getElementById('circuitCanvas');
         const ctx = canvas.getContext('2d');
         let width, height;
         
         let nodes = [];
-        const nodeCount = 100; // Number of particles
-        const connectionDistance = 120; // Max distance to connect nodes
-        const mouseConnectionDistance = 200; // Max distance to connect to mouse
+        const nodeCount = 120;
+        const connectionDistance = 150;
+        const mouseConnectionDistance = 250;
         
-        // --- INTERACTIVITY: Mouse/Touch tracking ---
         let mouse = { x: -1000, y: -1000 };
         
         function updateMousePos(e) {
             const rect = canvas.getBoundingClientRect();
-            // Calculate scale based on actual vs element size to ensure tip accuracy
-            const scaleX = canvas.width / rect.width;
-            const scaleY = canvas.height / rect.height;
-
-            mouse.x = (e.clientX - rect.left) * scaleX;
-            mouse.y = (e.clientY - rect.top) * scaleY;
+            mouse.x = e.clientX - rect.left;
+            mouse.y = e.clientY - rect.top;
         }
 
         window.addEventListener('mousemove', updateMousePos);
-        
-        window.addEventListener('touchmove', (e) => {
-            if(e.touches.length > 0) {
-                updateMousePos(e.touches[0]);
-            }
-        });
-
-        window.addEventListener('mouseout', () => {
-            mouse.x = -1000;
-            mouse.y = -1000;
-        });
-
-        window.addEventListener('touchend', () => {
-            mouse.x = -1000;
-            mouse.y = -1000;
-        });
+        window.addEventListener('mouseout', () => { mouse.x = -1000; mouse.y = -1000; });
         
         function resize() {
-            // Get the exact computed styling dimensions
-            const rect = canvas.getBoundingClientRect();
-            // Set internal resolution to match exact pixel dimensions
-            width = canvas.width = rect.width;
-            height = canvas.height = rect.height; 
-            initNodes();
+            const rect = canvas.parentElement.getBoundingClientRect();
+            if (rect.width > 0) {
+                width = canvas.width = rect.width;
+                height = canvas.height = rect.height; 
+                initNodes();
+            }
         }
 
         window.addEventListener('resize', resize);
@@ -714,24 +638,20 @@
             constructor() {
                 this.x = Math.random() * width;
                 this.y = Math.random() * height;
-                this.vx = (Math.random() - 0.5) * 1.2; // Velocity X
-                this.vy = (Math.random() - 0.5) * 1.2; // Velocity Y
-                this.radius = Math.random() * 1.5 + 1;
-                // Mix of colors for a tech feel
-                const colors = ['#00e5ff', '#38bdf8', '#818cf8', '#ffffff'];
+                this.vx = (Math.random() - 0.5) * 1.5; 
+                this.vy = (Math.random() - 0.5) * 1.5; 
+                this.radius = Math.random() * 2 + 1; 
+                const colors = ['#00e5ff', '#3b82f6', '#8b5cf6', '#ffffff'];
                 this.color = colors[Math.floor(Math.random() * colors.length)];
             }
 
             update() {
-                // Move node
                 this.x += this.vx;
                 this.y += this.vy;
 
-                // Bounce off edges
                 if (this.x < 0 || this.x > width) this.vx *= -1;
                 if (this.y < 0 || this.y > height) this.vy *= -1;
 
-                // Mouse interaction: Gentle push away
                 let dxMouse = this.x - mouse.x;
                 let dyMouse = this.y - mouse.y;
                 let distMouse = Math.sqrt(dxMouse*dxMouse + dyMouse*dyMouse);
@@ -747,10 +667,10 @@
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
                 ctx.fillStyle = this.color;
-                ctx.shadowBlur = 8;
+                ctx.shadowBlur = 15;
                 ctx.shadowColor = this.color;
                 ctx.fill();
-                ctx.shadowBlur = 0; // Reset shadow for lines
+                ctx.shadowBlur = 0; 
             }
         }
 
@@ -762,18 +682,14 @@
         }
 
         function animate() {
-            // Clear canvas with a slight trail effect
             ctx.clearRect(0, 0, width, height);
 
-            // Update and draw all nodes
             nodes.forEach(node => {
                 node.update();
                 node.draw();
             });
 
-            // Draw connections (constellation network)
             for (let i = 0; i < nodes.length; i++) {
-                // Connect to other nodes
                 for (let j = i + 1; j < nodes.length; j++) {
                     let dx = nodes[i].x - nodes[j].x;
                     let dy = nodes[i].y - nodes[j].y;
@@ -783,15 +699,13 @@
                         ctx.beginPath();
                         ctx.moveTo(nodes[i].x, nodes[i].y);
                         ctx.lineTo(nodes[j].x, nodes[j].y);
-                        // Fade line opacity based on distance
                         let opacity = 1 - (dist / connectionDistance);
-                        ctx.strokeStyle = `rgba(0, 229, 255, ${opacity * 0.5})`;
-                        ctx.lineWidth = 1;
+                        ctx.strokeStyle = `rgba(0, 229, 255, ${opacity * 0.6})`; 
+                        ctx.lineWidth = 1.2; 
                         ctx.stroke();
                     }
                 }
 
-                // Connect to mouse
                 let dxMouse = nodes[i].x - mouse.x;
                 let dyMouse = nodes[i].y - mouse.y;
                 let distMouse = Math.sqrt(dxMouse*dxMouse + dyMouse*dyMouse);
@@ -800,10 +714,9 @@
                     ctx.beginPath();
                     ctx.moveTo(nodes[i].x, nodes[i].y);
                     ctx.lineTo(mouse.x, mouse.y);
-                    // Brighter line connecting to cursor
                     let opacity = 1 - (distMouse / mouseConnectionDistance);
-                    ctx.strokeStyle = `rgba(56, 189, 248, ${opacity * 0.8})`; 
-                    ctx.lineWidth = 1.5;
+                    ctx.strokeStyle = `rgba(56, 189, 248, ${opacity})`; 
+                    ctx.lineWidth = 2; 
                     ctx.stroke();
                 }
             }
@@ -811,39 +724,174 @@
             requestAnimationFrame(animate);
         }
         
-        // Initialize animation
-        resize();
-        animate();
-
-        // Set current year in footer
-        document.getElementById('current-year').textContent = new Date().getFullYear();
-
-        // Mobile menu toggle
-        const btn = document.getElementById('mobile-menu-button');
-        const menu = document.getElementById('mobile-menu');
-
-        btn.addEventListener('click', () => {
-            menu.classList.toggle('hidden');
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                resize();
+                animate();
+            }, 100);
         });
 
-        // Close mobile menu when a link is clicked
-        const mobileLinks = menu.querySelectorAll('a');
-        mobileLinks.forEach(link => {
-            link.addEventListener('click', () => {
-                menu.classList.add('hidden');
+        // ==========================================
+        // 3D DECOUPLED ENGINE
+        // ==========================================
+        const container3D = document.getElementById('webgl-canvas');
+        const scene = new THREE.Scene();
+        scene.fog = new THREE.FogExp2(0x030508, 0.04);
+
+        const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
+        const isMobile = window.innerWidth < 768;
+        camera.position.set(0, 2, isMobile ? 18 : 12);
+        camera.lookAt(0, 0, 0);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.shadowMap.enabled = true;
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = 1.2;
+        container3D.appendChild(renderer.domElement);
+
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+        scene.add(ambientLight);
+        const spotLight = new THREE.SpotLight(0xffffff, 3);
+        spotLight.position.set(5, 10, 5);
+        spotLight.castShadow = true;
+        scene.add(spotLight);
+
+        // --- HIERARCHY ---
+        const masterGroup = new THREE.Group();
+        scene.add(masterGroup);
+
+        const boardGroup = new THREE.Group();
+        masterGroup.add(boardGroup);
+
+        const wireAnimGroup = new THREE.Group();
+        masterGroup.add(wireAnimGroup);
+
+        const wireDebugGroup = new THREE.Group();
+        wireAnimGroup.add(wireDebugGroup);
+
+        // HARDCODED FINAL COORDINATES FROM SCREENSHOT
+        const alignConfig = {
+            plugX: 3.40, 
+            plugY: 1.45, 
+            startZ: -3.00, 
+            spacingZ: 0.35,  
+            boardX: 3.00, 
+            boardY: 0.00, 
+            boardZ: -3.30,
+            boardRotX: -2.09, 
+            boardRotY: -1.49, 
+            boardRotZ: -0.49
+        };
+
+        // Initialize Board Alignment
+        boardGroup.position.set(alignConfig.boardX, alignConfig.boardY, alignConfig.boardZ);
+        boardGroup.rotation.set(alignConfig.boardRotX, alignConfig.boardRotY, alignConfig.boardRotZ);
+        
+        // Initialize Wires Wrapper Alignment
+        wireDebugGroup.position.set(alignConfig.plugX, alignConfig.plugY, 0);
+
+        // --- LOAD ESP32.GLB ---
+        const loader = new THREE.GLTFLoader();
+        loader.load('./esp32.glb', function(gltf) {
+            const espModel = gltf.scene;
+            
+            // Auto Scale & Center
+            const box = new THREE.Box3().setFromObject(espModel);
+            const size = box.getSize(new THREE.Vector3());
+            const maxDim = Math.max(size.x, size.y, size.z);
+            const scaleFactor = 6.0 / maxDim; 
+            espModel.scale.set(scaleFactor, scaleFactor, scaleFactor);
+            
+            const scaledBox = new THREE.Box3().setFromObject(espModel);
+            const center = scaledBox.getCenter(new THREE.Vector3());
+            espModel.position.sub(center);
+
+            espModel.traverse((child) => {
+                if (child.isMesh) { child.castShadow = true; child.receiveShadow = true; }
             });
+
+            boardGroup.add(espModel);
+        }, undefined, function(error) {
+            console.error('CRITICAL 3D ERROR:', error);
+            document.getElementById('3d-error-message').style.display = 'block';
         });
 
-        // Navbar scroll effect
-        const navbar = document.getElementById('navbar');
-        window.addEventListener('scroll', () => {
-            if (window.scrollY > 20) {
-                navbar.classList.add('shadow-sm', 'bg-white/95');
-                navbar.classList.remove('bg-white/90');
-            } else {
-                navbar.classList.remove('shadow-sm', 'bg-white/95');
-                navbar.classList.add('bg-white/90');
+        // --- 4 HORIZONTAL WIRES ---
+        const wireColors = [ 0x8B4513, 0xffffff, 0xff0000, 0xff8c00 ];
+
+        wireColors.forEach((colorHex, index) => {
+            const jumperGroup = new THREE.Group();
+            
+            const plasticMat = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.9 });
+            const housing = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.2, 0.2), plasticMat);
+            housing.position.set(0.4, 0, 0); 
+            housing.castShadow = true;
+            jumperGroup.add(housing);
+
+            const curve = new THREE.CatmullRomCurve3([
+                new THREE.Vector3(0.8, 0, 0),
+                new THREE.Vector3(3, -0.5, 0.5),
+                new THREE.Vector3(6, -2, 2),
+                new THREE.Vector3(20, -5, 5) 
+            ]);
+            const wireMat = new THREE.MeshPhysicalMaterial({ color: colorHex, roughness: 0.8, clearcoat: 0 });
+            const wire = new THREE.Mesh(new THREE.TubeGeometry(curve, 64, 0.05, 8, false), wireMat);
+            wire.castShadow = true;
+            jumperGroup.add(wire);
+            
+            // Set Z spacing position
+            jumperGroup.position.set(0, 0, alignConfig.startZ + (index * alignConfig.spacingZ)); 
+            
+            wireDebugGroup.add(jumperGroup);
+        });
+
+        // ==========================================
+        // GSAP ANIMATIONS
+        // ==========================================
+        
+        masterGroup.position.y = 15; // Starts off screen
+        wireAnimGroup.position.x = 10; // Starts pushed out to the right
+
+        const tl = gsap.timeline({
+            scrollTrigger: { trigger: "#innovation-trigger", start: "top top", end: "bottom bottom", scrub: 1 }
+        });
+
+        // 1. Drop entire assembly into view
+        tl.fromTo("#innovation-text", { opacity: 0, x: -50 }, { opacity: 1, x: 0, duration: 1 }, 0);
+        tl.to(masterGroup.position, { y: 0, duration: 1.5, ease: "power2.out" }, 0); 
+        
+        // Subtle global tilt for the final cinematic look
+        tl.to(masterGroup.rotation, { x: 0.2, y: -0.1, z: 0.05, duration: 2, ease: "power1.inOut" }, 0);
+        
+        // 2. The Wires slide horizontally into the board
+        tl.to(wireAnimGroup.position, { x: 0, duration: 1.5, ease: "power2.inOut" }, 1.0);
+        
+        // 3. Camera pan
+        tl.to(camera.position, { x: 1, y: 3, z: isMobile ? 12 : 8, duration: 1.5, ease: "power1.inOut" }, 1.5);
+        
+        // 4. Fade Out cleanly
+        tl.to("#webgl-canvas", { opacity: 0, duration: 0.5 }, 4.5);
+        tl.to("#innovation-text", { opacity: 0, y: -50, duration: 0.5 }, 4.5);
+
+        // Render Loop
+        function animate3D() {
+            requestAnimationFrame(animate3D);
+            if (window.scrollY < window.innerHeight * 4) {
+                const time = Date.now() * 0.002;
+                if(masterGroup.position.y < 1) {
+                    masterGroup.position.y = (Math.sin(time) * 0.1);
+                }
+                renderer.render(scene, camera);
             }
+        }
+        animate3D();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
         });
     </script>
 </body>
