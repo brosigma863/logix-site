@@ -83,11 +83,17 @@
         /* Glassmorphism Panels */
         .glass-panel {
             background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.05);
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
         }
+
+        /* Performance: keep animated layers on the GPU */
+        .orb { will-change: transform; backface-visibility: hidden; }
+        #circuitCanvas { transform: translateZ(0); }
+        #webgl-canvas canvas { display: block; }
+        @media (prefers-reduced-motion: reduce) { .orb { animation: none !important; } }
 
         /* Glowing text effect */
         .text-glow {
@@ -158,8 +164,8 @@
     <!-- IMMERSIVE 2D HERO SECTION -->
     <header class="relative h-screen w-full flex items-center justify-center overflow-hidden bg-logix-dark">
         <!-- Animated Atmospheric Orbs -->
-        <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-logix-blue rounded-full mix-blend-screen filter blur-[100px] opacity-30 animate-blob"></div>
-        <div class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-900 rounded-full mix-blend-screen filter blur-[100px] opacity-30 animate-blob" style="animation-delay: 2s;"></div>
+        <div class="orb absolute top-1/4 left-1/4 w-96 h-96 rounded-full animate-blob" style="background: radial-gradient(circle, rgba(0,91,159,0.55) 0%, rgba(0,91,159,0.25) 35%, rgba(0,91,159,0) 70%);"></div>
+        <div class="orb absolute bottom-1/4 right-1/4 w-96 h-96 rounded-full animate-blob" style="animation-delay: 2s; background: radial-gradient(circle, rgba(88,28,135,0.55) 0%, rgba(88,28,135,0.25) 35%, rgba(88,28,135,0) 70%);"></div>
         
         <!-- 2D Canvas Network -->
         <div class="absolute inset-0 z-0">
@@ -351,7 +357,7 @@
     <!-- Glassmorphic Order Section -->
     <section id="order" class="py-24 relative reveal">
         <!-- Colored Background Glow -->
-        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-logix-accent/20 rounded-full blur-[120px] -z-10 pointer-events-none"></div>
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full -z-10 pointer-events-none" style="background: radial-gradient(circle, rgba(0,229,255,0.16) 0%, rgba(0,229,255,0.07) 40%, rgba(0,229,255,0) 70%);"></div>
 
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="glass-panel rounded-3xl overflow-hidden flex flex-col lg:flex-row border border-white/10 shadow-[0_0_50px_rgba(0,0,0,0.5)]">
@@ -515,31 +521,43 @@
 
         // Glass Navbar Scroll Effect
         const navbar = document.getElementById('navbar');
+        let navScrolled = false;
         window.addEventListener('scroll', () => {
-            if (window.scrollY > 20) {
+            const scrolled = window.scrollY > 20;
+            if (scrolled === navScrolled) return;
+            navScrolled = scrolled;
+            if (scrolled) {
                 navbar.classList.replace('top-[44px]', 'top-2');
             } else {
                 navbar.classList.replace('top-2', 'top-[44px]');
             }
-        });
+        }, { passive: true });
 
         // Interactive 3D Tilt Effect for Elements
         document.querySelectorAll('.tilt-effect').forEach(element => {
+            let tiltFrame = null;
+            let tiltEvent = null;
             element.addEventListener('mousemove', (e) => {
-                const rect = element.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-                
-                const centerX = rect.width / 2;
-                const centerY = rect.height / 2;
-                
-                const rotateX = ((y - centerY) / centerY) * -10; 
-                const rotateY = ((x - centerX) / centerX) * 10;
-                
-                element.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+                tiltEvent = e;
+                if (tiltFrame) return;
+                tiltFrame = requestAnimationFrame(() => {
+                    tiltFrame = null;
+                    const rect = element.getBoundingClientRect();
+                    const x = tiltEvent.clientX - rect.left;
+                    const y = tiltEvent.clientY - rect.top;
+                    
+                    const centerX = rect.width / 2;
+                    const centerY = rect.height / 2;
+                    
+                    const rotateX = ((y - centerY) / centerY) * -10; 
+                    const rotateY = ((x - centerX) / centerX) * 10;
+                    
+                    element.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+                });
             });
             
             element.addEventListener('mouseleave', () => {
+                if (tiltFrame) { cancelAnimationFrame(tiltFrame); tiltFrame = null; }
                 element.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
             });
         });
@@ -852,34 +870,62 @@
         // ==========================================
         const canvas = document.getElementById('circuitCanvas');
         const ctx = canvas.getContext('2d');
-        let width, height;
+        let width = 0, height = 0, dpr = 1;
         
         let nodes = [];
-        const nodeCount = 120;
+        const isSmallScreen = window.innerWidth < 768;
+        const nodeCount = isSmallScreen ? 60 : 120;
         const connectionDistance = 150;
+        const connectionDistanceSq = connectionDistance * connectionDistance;
         const mouseConnectionDistance = 250;
+        const LINE_BUCKETS = 8;
+        const nodeColors = ['#00e5ff', '#3b82f6', '#8b5cf6', '#ffffff'];
+
+        // Pre-rendered glow sprites (replaces the very slow per-dot shadowBlur)
+        const glowSprites = {};
+        nodeColors.forEach(color => {
+            const size = 64;
+            const c = document.createElement('canvas');
+            c.width = c.height = size;
+            const g = c.getContext('2d');
+            const grad = g.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
+            grad.addColorStop(0, color);
+            grad.addColorStop(0.25, color + '66');
+            grad.addColorStop(1, color + '00');
+            g.fillStyle = grad;
+            g.fillRect(0, 0, size, size);
+            glowSprites[color] = c;
+        });
         
         let mouse = { x: -1000, y: -1000 };
+        let mouseClientX = -1, mouseClientY = -1, mouseActive = false;
         
-        function updateMousePos(e) {
-            const rect = canvas.getBoundingClientRect();
-            mouse.x = e.clientX - rect.left;
-            mouse.y = e.clientY - rect.top;
-        }
-
-        window.addEventListener('mousemove', updateMousePos);
-        window.addEventListener('mouseout', () => { mouse.x = -1000; mouse.y = -1000; });
+        window.addEventListener('mousemove', (e) => {
+            mouseClientX = e.clientX;
+            mouseClientY = e.clientY;
+            mouseActive = true;
+        }, { passive: true });
+        document.addEventListener('mouseleave', () => { mouseActive = false; mouse.x = -1000; mouse.y = -1000; });
         
         function resize() {
             const rect = canvas.parentElement.getBoundingClientRect();
-            if (rect.width > 0) {
-                width = canvas.width = rect.width;
-                height = canvas.height = rect.height; 
-                initNodes();
-            }
+            if (rect.width <= 0) return;
+            const widthChanged = Math.abs(rect.width - width) > 1;
+            dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+            width = rect.width;
+            height = rect.height;
+            canvas.width = Math.round(width * dpr);
+            canvas.height = Math.round(height * dpr);
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+            // Only rebuild the nodes when the width really changed (mobile address bar fires resize on scroll)
+            if (widthChanged || nodes.length === 0) initNodes();
         }
 
-        window.addEventListener('resize', resize);
+        let resizeTimer = null;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(resize, 150);
+        });
         
         class Node {
             constructor() {
@@ -888,36 +934,35 @@
                 this.vx = (Math.random() - 0.5) * 1.5; 
                 this.vy = (Math.random() - 0.5) * 1.5; 
                 this.radius = Math.random() * 2 + 1; 
-                const colors = ['#00e5ff', '#3b82f6', '#8b5cf6', '#ffffff'];
-                this.color = colors[Math.floor(Math.random() * colors.length)];
+                this.color = nodeColors[Math.floor(Math.random() * nodeColors.length)];
             }
 
-            update() {
-                this.x += this.vx;
-                this.y += this.vy;
+            update(step) {
+                this.x += this.vx * step;
+                this.y += this.vy * step;
 
                 if (this.x < 0 || this.x > width) this.vx *= -1;
                 if (this.y < 0 || this.y > height) this.vy *= -1;
 
-                let dxMouse = this.x - mouse.x;
-                let dyMouse = this.y - mouse.y;
-                let distMouse = Math.sqrt(dxMouse*dxMouse + dyMouse*dyMouse);
-
-                if (distMouse < mouseConnectionDistance) {
-                    let force = (mouseConnectionDistance - distMouse) / mouseConnectionDistance;
-                    this.x += (dxMouse / distMouse) * force * 1.5;
-                    this.y += (dyMouse / distMouse) * force * 1.5;
+                if (mouseActive) {
+                    const dxMouse = this.x - mouse.x;
+                    const dyMouse = this.y - mouse.y;
+                    const distMouse = Math.sqrt(dxMouse * dxMouse + dyMouse * dyMouse);
+                    if (distMouse < mouseConnectionDistance && distMouse > 0.001) {
+                        const force = (mouseConnectionDistance - distMouse) / mouseConnectionDistance;
+                        this.x += (dxMouse / distMouse) * force * 1.5 * step;
+                        this.y += (dyMouse / distMouse) * force * 1.5 * step;
+                    }
                 }
             }
 
             draw() {
+                const glow = this.radius * 7;
+                ctx.drawImage(glowSprites[this.color], this.x - glow, this.y - glow, glow * 2, glow * 2);
+                ctx.fillStyle = this.color;
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-                ctx.fillStyle = this.color;
-                ctx.shadowBlur = 15;
-                ctx.shadowColor = this.color;
                 ctx.fill();
-                ctx.shadowBlur = 0; 
             }
         }
 
@@ -928,53 +973,99 @@
             }
         }
 
-        function animate() {
+        let heroVisible = true;
+        let netRunning = false;
+        let lastNetTime = 0;
+
+        function animate(now) {
+            if (!heroVisible || document.hidden) { netRunning = false; return; }
+            requestAnimationFrame(animate);
+
+            // Frame-rate independent movement (same speed at 60Hz and 120Hz)
+            const dt = lastNetTime ? Math.min(now - lastNetTime, 50) : 16.67;
+            lastNetTime = now;
+            const step = dt / 16.67;
+
+            if (mouseActive) {
+                const rect = canvas.getBoundingClientRect();
+                mouse.x = mouseClientX - rect.left;
+                mouse.y = mouseClientY - rect.top;
+            }
+
             ctx.clearRect(0, 0, width, height);
 
-            nodes.forEach(node => {
-                node.update();
-                node.draw();
-            });
+            for (let i = 0; i < nodes.length; i++) nodes[i].update(step);
+
+            // Batch all lines into a few paths (one stroke per opacity level instead of one per line)
+            const buckets = [];
+            for (let b = 0; b < LINE_BUCKETS; b++) buckets.push([]);
 
             for (let i = 0; i < nodes.length; i++) {
+                const a = nodes[i];
                 for (let j = i + 1; j < nodes.length; j++) {
-                    let dx = nodes[i].x - nodes[j].x;
-                    let dy = nodes[i].y - nodes[j].y;
-                    let dist = Math.sqrt(dx*dx + dy*dy);
-
-                    if (dist < connectionDistance) {
-                        ctx.beginPath();
-                        ctx.moveTo(nodes[i].x, nodes[i].y);
-                        ctx.lineTo(nodes[j].x, nodes[j].y);
-                        let opacity = 1 - (dist / connectionDistance);
-                        ctx.strokeStyle = `rgba(0, 229, 255, ${opacity * 0.6})`; 
-                        ctx.lineWidth = 1.2; 
-                        ctx.stroke();
+                    const b = nodes[j];
+                    const dx = a.x - b.x;
+                    const dy = a.y - b.y;
+                    const distSq = dx * dx + dy * dy;
+                    if (distSq < connectionDistanceSq) {
+                        const opacity = 1 - Math.sqrt(distSq) / connectionDistance;
+                        const bucket = Math.min(LINE_BUCKETS - 1, Math.floor(opacity * LINE_BUCKETS));
+                        buckets[bucket].push(a.x, a.y, b.x, b.y);
                     }
-                }
-
-                let dxMouse = nodes[i].x - mouse.x;
-                let dyMouse = nodes[i].y - mouse.y;
-                let distMouse = Math.sqrt(dxMouse*dxMouse + dyMouse*dyMouse);
-
-                if (distMouse < mouseConnectionDistance) {
-                    ctx.beginPath();
-                    ctx.moveTo(nodes[i].x, nodes[i].y);
-                    ctx.lineTo(mouse.x, mouse.y);
-                    let opacity = 1 - (distMouse / mouseConnectionDistance);
-                    ctx.strokeStyle = `rgba(56, 189, 248, ${opacity})`; 
-                    ctx.lineWidth = 2; 
-                    ctx.stroke();
                 }
             }
 
+            ctx.lineWidth = 1.2;
+            for (let b = 0; b < LINE_BUCKETS; b++) {
+                const pts = buckets[b];
+                if (!pts.length) continue;
+                const opacity = (b + 0.5) / LINE_BUCKETS;
+                ctx.strokeStyle = `rgba(0, 229, 255, ${opacity * 0.6})`;
+                ctx.beginPath();
+                for (let k = 0; k < pts.length; k += 4) {
+                    ctx.moveTo(pts[k], pts[k + 1]);
+                    ctx.lineTo(pts[k + 2], pts[k + 3]);
+                }
+                ctx.stroke();
+            }
+
+            if (mouseActive) {
+                ctx.lineWidth = 2;
+                for (let i = 0; i < nodes.length; i++) {
+                    const dxMouse = nodes[i].x - mouse.x;
+                    const dyMouse = nodes[i].y - mouse.y;
+                    const distMouse = Math.sqrt(dxMouse * dxMouse + dyMouse * dyMouse);
+                    if (distMouse < mouseConnectionDistance) {
+                        ctx.strokeStyle = `rgba(56, 189, 248, ${1 - distMouse / mouseConnectionDistance})`;
+                        ctx.beginPath();
+                        ctx.moveTo(nodes[i].x, nodes[i].y);
+                        ctx.lineTo(mouse.x, mouse.y);
+                        ctx.stroke();
+                    }
+                }
+            }
+
+            for (let i = 0; i < nodes.length; i++) nodes[i].draw();
+        }
+
+        function startNetwork() {
+            if (netRunning || !heroVisible || document.hidden) return;
+            netRunning = true;
+            lastNetTime = 0;
             requestAnimationFrame(animate);
         }
+
+        // Only animate while the hero is actually on screen
+        new IntersectionObserver((entries) => {
+            heroVisible = entries[0].isIntersecting;
+            if (heroVisible) startNetwork();
+        }, { threshold: 0 }).observe(canvas);
+        document.addEventListener('visibilitychange', startNetwork);
         
         window.addEventListener('load', () => {
             setTimeout(() => {
                 resize();
-                animate();
+                startNetwork();
             }, 100);
         });
 
@@ -990,9 +1081,9 @@
         camera.position.set(0, 2, isMobile ? 18 : 12);
         camera.lookAt(0, 0, 0);
 
-        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
         renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
         renderer.shadowMap.enabled = true;
         renderer.toneMapping = THREE.ACESFilmicToneMapping;
         renderer.toneMappingExposure = 1.2;
@@ -1122,24 +1213,42 @@
         tl.to("#webgl-canvas", { opacity: 0, duration: 0.5 }, 4.5);
         tl.to("#innovation-text", { opacity: 0, y: -50, duration: 0.5 }, 4.5);
 
-        // Render Loop
-        function animate3D() {
-            requestAnimationFrame(animate3D);
-            if (window.scrollY < window.innerHeight * 4) {
-                const time = Date.now() * 0.002;
-                if(masterGroup.position.y < 1) {
-                    masterGroup.position.y = (Math.sin(time) * 0.1);
-                }
-                renderer.render(scene, camera);
-            }
-        }
-        animate3D();
+        // Render Loop - only runs while the 3D section is on screen
+        let sceneVisible = false;
+        let sceneRunning = false;
 
+        function animate3D() {
+            if (!sceneVisible || document.hidden) { sceneRunning = false; return; }
+            requestAnimationFrame(animate3D);
+            const time = performance.now() * 0.002;
+            if (masterGroup.position.y < 1) {
+                masterGroup.position.y = (Math.sin(time) * 0.1);
+            }
+            renderer.render(scene, camera);
+        }
+
+        function startScene() {
+            if (sceneRunning || !sceneVisible || document.hidden) return;
+            sceneRunning = true;
+            requestAnimationFrame(animate3D);
+        }
+
+        new IntersectionObserver((entries) => {
+            sceneVisible = entries[0].isIntersecting;
+            if (sceneVisible) startScene();
+        }, { rootMargin: '100px 0px 100px 0px' }).observe(document.getElementById('innovation-trigger'));
+        document.addEventListener('visibilitychange', startScene);
+
+        let resize3DTimer = null;
         window.addEventListener('resize', () => {
+            clearTimeout(resize3DTimer);
+            resize3DTimer = setTimeout(() => {
                 camera.aspect = window.innerWidth / window.innerHeight;
                 camera.updateProjectionMatrix();
                 renderer.setSize(window.innerWidth, window.innerHeight);
-            });
+                if (sceneVisible) renderer.render(scene, camera);
+            }, 150);
+        });
     </script>
 </body>
 </html>
