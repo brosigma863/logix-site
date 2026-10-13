@@ -1132,6 +1132,10 @@
 
         // --- LOAD ESP32.GLB ---
         const loader = new THREE.GLTFLoader();
+        let boardLoaded = false;
+        function loadBoard() {
+        if (boardLoaded) return;
+        boardLoaded = true;
         loader.load('./esp32.glb', function(gltf) {
             const espModel = gltf.scene;
             
@@ -1155,6 +1159,9 @@
             console.error('CRITICAL 3D ERROR:', error);
             document.getElementById('3d-error-message').style.display = 'block';
         });
+        }
+        // Download the big model only when the user is about 1.5 screens away
+        new IntersectionObserver((e, o) => { if (e[0].isIntersecting) { loadBoard(); o.disconnect(); } }, { rootMargin: '1500px 0px' }).observe(document.getElementById('innovation-trigger'));
 
         // --- 4 HORIZONTAL WIRES ---
         const wireColors = [ 0x8B4513, 0xffffff, 0xff0000, 0xff8c00 ];
