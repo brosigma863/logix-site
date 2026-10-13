@@ -1295,80 +1295,88 @@
         window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };
       </script>
       <script defer src="/<unique-path>/script.js"></script>
-        <!-- --- LOGIX AI CHAT WIDGET HTML --- -->
-    <button id="logix-chat-btn" onclick="toggleChat()">💬 Brainstorm an Idea</button>
-    <div id="logix-chat-window" style="display: none;">
-        <div class="chat-header">Logix Guide</div>
-        <div id="chat-history">
-            <div class="bot-msg">Hi! I'm the Logix AI. Tell me about your business or a daily annoyance, and I'll pitch a custom gadget we can build for you!</div>
-        </div>
-        <div class="chat-input-area">
-            <input type="text" id="chat-input" placeholder="e.g., I manage a small gym..." onkeypress="if(event.key === 'Enter') sendMessage()" />
-            <button onclick="sendMessage()">Send</button>
-        </div>
-        <button id="fill-form-btn" onclick="sendToQuoteForm()" style="display:none;">
-            📝 Send this idea to the Quote Form
-        </button>
+       <!-- --- LOGIX AI CHAT WIDGET HTML --- -->
+<button id="logix-chat-btn" onclick="toggleChat()">💬 Brainstorm an Idea</button>
+<div id="logix-chat-window" style="display: none;">
+    <div class="chat-header">Logix Guide</div>
+    <div id="chat-history">
+        <div class="bot-msg">Hi! I'm the Logix AI. Tell me about your business or a daily annoyance, and I'll pitch a custom gadget we can build for you!</div>
     </div>
-    <script>
-        function toggleChat() {
-            const chat = document.getElementById('logix-chat-window');
-            chat.style.display = chat.style.display === 'none' ? 'flex' : 'none';
-        }
-    
-        let lastAiResponse = ""; 
-    
-        async function sendMessage() {
-            const input = document.getElementById('chat-input');
-            const message = input.value.trim();
-            if (!message) return;
-    
-            const history = document.getElementById('chat-history');
+    <div class="chat-input-area">
+        <input type="text" id="chat-input" placeholder="e.g., I manage a small gym..." onkeypress="if(event.key === 'Enter') sendMessage()" />
+        <button onclick="sendMessage()">Send</button>
+    </div>
+    <button id="fill-form-btn" onclick="sendToQuoteForm()" style="display:none;">
+        📝 Send this idea to the Quote Form
+    </button>
+</div>
+
+<script>
+    function toggleChat() {
+        const chat = document.getElementById('logix-chat-window');
+        chat.style.display = chat.style.display === 'none' ? 'flex' : 'none';
+    }
+
+    let lastAiResponse = ""; 
+
+    async function sendMessage() {
+        const input = document.getElementById('chat-input');
+        const message = input.value.trim();
+        if (!message) return;
+
+        const history = document.getElementById('chat-history');
+        
+        history.innerHTML += `<div class="user-msg">${message}</div>`;
+        input.value = '';
+        history.innerHTML += `<div class="bot-msg" id="loading">Thinking...</div>`;
+        
+        // Auto-scroll to bottom
+        history.scrollTop = history.scrollHeight;
+
+        try {
+            const response = await fetch('/api/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: message })
+            });
+
+            const data = await response.json();
+            document.getElementById('loading').remove();
             
-            history.innerHTML += `<div class="user-msg">${message}</div>`;
-            input.value = '';
-            history.innerHTML += `<div class="bot-msg" id="loading">Thinking...</div>`;
-            
-            // Auto-scroll to bottom
-            history.scrollTop = history.scrollHeight;
-    
-            try {
-                // This calls your secure backend file (api/chat.js)
-                const response = await fetch('/api/chat', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: message })
-                });
-    
-                const data = await response.json();
-                
-                document.getElementById('loading').remove();
+            if (data.error || (data.reply && data.reply.includes("System Offline"))) {
+                history.innerHTML += `<div class="bot-msg" style="color:#ff3333;">System Offline: Please try again later.</div>`;
+            } else {
+                // Show the friendly message in the chat bubble
                 history.innerHTML += `<div class="bot-msg">${data.reply}</div>`;
-                history.scrollTop = history.scrollHeight;
                 
-                lastAiResponse = data.reply;
+                // Save ONLY the strict technical details for the form button
+                lastAiResponse = data.quote_details || data.reply; 
+                
                 document.getElementById('fill-form-btn').style.display = 'block';
-            } catch (error) {
-                document.getElementById('loading').remove();
-                history.innerHTML += `<div class="bot-msg" style="color:#ff3333;">Error connecting to Logix AI.</div>`;
             }
-        }
-    
-        function sendToQuoteForm() {
-            // Targets the specific ID "project" from your HTML form
-            const quoteInput = document.getElementById('project'); 
             
-            if (quoteInput) {
-                quoteInput.value = "From AI Brainstorming session:\n\n" + lastAiResponse;
-                quoteInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                toggleChat(); 
-                
-                // Highlight the form briefly to show it was updated
-                quoteInput.style.transition = 'background-color 0.5s';
-                quoteInput.style.backgroundColor = 'rgba(0, 229, 255, 0.2)';
-                setTimeout(() => quoteInput.style.backgroundColor = '', 1000);
-            }
+            history.scrollTop = history.scrollHeight;
+        } catch (error) {
+            document.getElementById('loading').remove();
+            history.innerHTML += `<div class="bot-msg" style="color:#ff3333;">Error connecting to Logix AI.</div>`;
         }
-    </script>
+    }
+
+    function sendToQuoteForm() {
+        // Targets the specific ID "project" from your HTML form
+        const quoteInput = document.getElementById('project'); 
+        
+        if (quoteInput) {
+            quoteInput.value = "From AI Brainstorming session:\n\n" + lastAiResponse;
+            quoteInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            toggleChat(); 
+            
+            // Highlight the form briefly to show it was updated
+            quoteInput.style.transition = 'background-color 0.5s';
+            quoteInput.style.backgroundColor = 'rgba(0, 229, 255, 0.2)';
+            setTimeout(() => quoteInput.style.backgroundColor = '', 1000);
+        }
+    }
+</script>
 </body>
 </html>
