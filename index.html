@@ -105,6 +105,25 @@
         .sticky-3d-container { position: sticky; top: 0; height: 100vh; width: 100%; overflow: hidden; }
         #webgl-canvas { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
         .innovation-text-layer { position: absolute; inset: 0; display: flex; align-items: center; padding: 0 5vw; z-index: 10; pointer-events: none; }
+    /* ... existing styles ... */
+    .innovation-text-layer { position: absolute; inset: 0; display: flex; align-items: center; padding: 0 5vw; z-index: 10; pointer-events: none; }
+        
+        /* --- ADD LOGIX AI CHAT CSS HERE --- */
+        :root { --logix-surface: #18181b; --logix-border: #27272a; }
+        #logix-chat-btn { position: fixed; bottom: 24px; right: 24px; z-index: 1000; background-color: #00e5ff; color: #000; border: none; padding: 14px 24px; border-radius: 50px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 12px rgba(0,229,255, 0.3); animation: pulse-glow 2s infinite; }
+        #logix-chat-btn:hover { transform: translateY(-2px); animation: none; }
+        @keyframes pulse-glow { 0% { box-shadow: 0 0 0 0 rgba(0,229,255, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(0,229,255, 0); } 100% { box-shadow: 0 0 0 0 rgba(0,229,255, 0); } }
+        #logix-chat-window { position: fixed; bottom: 85px; right: 24px; width: 360px; height: 520px; background-color: #0a0f1c; border: 1px solid var(--logix-border); border-radius: 12px; z-index: 1000; box-shadow: 0 12px 40px rgba(0, 0, 0, 0.8); display: flex; flex-direction: column; overflow: hidden; animation: slide-up 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+        @keyframes slide-up { from { opacity: 0; transform: translateY(20px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
+        .chat-header { background-color: var(--logix-surface); color: #fff; padding: 16px; font-weight: 600; border-bottom: 1px solid var(--logix-border); }
+        #chat-history { flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
+        .user-msg, .bot-msg { padding: 12px 16px; font-size: 14px; max-width: 85%; word-wrap: break-word; }
+        .bot-msg { background-color: var(--logix-surface); color: #fff; border: 1px solid var(--logix-border); border-radius: 12px 12px 12px 2px; align-self: flex-start; }
+        .user-msg { background-color: #00e5ff; color: #000; border-radius: 12px 12px 2px 12px; align-self: flex-end; font-weight: 500; }
+        .chat-input-area { display: flex; padding: 12px; background-color: var(--logix-surface); border-top: 1px solid var(--logix-border); gap: 8px; }
+        #chat-input { flex: 1; background-color: #0a0f1c; border: 1px solid var(--logix-border); color: #fff; padding: 10px; border-radius: 6px; outline: none; }
+        .chat-input-area button { background-color: #00e5ff; color: #000; border: none; padding: 0 16px; border-radius: 6px; font-weight: 600; cursor: pointer; }
+        #fill-form-btn { margin: 0 12px 12px 12px; background-color: var(--logix-surface); color: #fff; border: 1px dashed #52525b; padding: 10px; border-radius: 6px; font-size: 13px; cursor: pointer; }
     </style>
 </head>
 <body class="font-sans text-gray-200 antialiased selection:bg-logix-accent selection:text-gray-900 overflow-x-hidden bg-logix-dark">
@@ -122,8 +141,8 @@
     </div>
 
     <!-- Glassmorphic Navbar -->
-    <nav class="fixed top-[32px] md:top-[44px] w-full z-50 transition-all duration-500" id="navbar">
-        <div class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 mt-2 md:mt-4">
+    <nav class="fixed top-[32px] md:top-[44px] inset-x-0 max-w-[100vw] z-50 transition-all duration-500" id="navbar">
+        <div class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-2 md:mt-4">
             <div class="glass-panel rounded-xl md:rounded-2xl flex justify-between items-center h-12 md:h-16 px-4 md:px-6">
                 <!-- Logo -->
                 <div class="flex-shrink-0 flex items-center gap-2 md:gap-3 group cursor-pointer" onclick="window.scrollTo(0,0)">
@@ -151,8 +170,8 @@
         </div>
         
         <!-- Mobile Menu Panel -->
-        <div id="mobile-menu" class="md:hidden hidden absolute w-full px-2 mt-2">
-            <div class="glass-panel rounded-xl px-4 pt-2 pb-6 space-y-2 border border-white/10">
+        <div id="mobile-menu" class="md:hidden hidden absolute inset-x-0 px-4 mt-2 max-w-[100vw]">
+            <div class="glass-panel rounded-xl px-4 pt-2 pb-6 space-y-2 border border-white/10 mx-auto w-full">
                 <a href="#about" class="block px-3 py-3 text-sm font-medium text-gray-200 hover:bg-white/5 rounded-md">About</a>
                 <a href="#work" class="block px-3 py-3 text-sm font-medium text-gray-200 hover:bg-white/5 rounded-md">Gadgets</a>
                 <a href="#ideas" class="block px-3 py-3 text-sm font-medium text-gray-200 hover:bg-white/5 rounded-md">Ideas</a>
@@ -1270,10 +1289,86 @@
                 if (sceneVisible) renderer.render(scene, camera);
             }, 150);
         });
+        
     </script>
     <script>
         window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };
       </script>
       <script defer src="/<unique-path>/script.js"></script>
+        <!-- --- LOGIX AI CHAT WIDGET HTML --- -->
+    <button id="logix-chat-btn" onclick="toggleChat()">💬 Brainstorm an Idea</button>
+    <div id="logix-chat-window" style="display: none;">
+        <div class="chat-header">Logix Guide</div>
+        <div id="chat-history">
+            <div class="bot-msg">Hi! I'm the Logix AI. Tell me about your business or a daily annoyance, and I'll pitch a custom gadget we can build for you!</div>
+        </div>
+        <div class="chat-input-area">
+            <input type="text" id="chat-input" placeholder="e.g., I manage a small gym..." onkeypress="if(event.key === 'Enter') sendMessage()" />
+            <button onclick="sendMessage()">Send</button>
+        </div>
+        <button id="fill-form-btn" onclick="sendToQuoteForm()" style="display:none;">
+            📝 Send this idea to the Quote Form
+        </button>
+    </div>
+    <script>
+        function toggleChat() {
+            const chat = document.getElementById('logix-chat-window');
+            chat.style.display = chat.style.display === 'none' ? 'flex' : 'none';
+        }
+    
+        let lastAiResponse = ""; 
+    
+        async function sendMessage() {
+            const input = document.getElementById('chat-input');
+            const message = input.value.trim();
+            if (!message) return;
+    
+            const history = document.getElementById('chat-history');
+            
+            history.innerHTML += `<div class="user-msg">${message}</div>`;
+            input.value = '';
+            history.innerHTML += `<div class="bot-msg" id="loading">Thinking...</div>`;
+            
+            // Auto-scroll to bottom
+            history.scrollTop = history.scrollHeight;
+    
+            try {
+                // This calls your secure backend file (api/chat.js)
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: message })
+                });
+    
+                const data = await response.json();
+                
+                document.getElementById('loading').remove();
+                history.innerHTML += `<div class="bot-msg">${data.reply}</div>`;
+                history.scrollTop = history.scrollHeight;
+                
+                lastAiResponse = data.reply;
+                document.getElementById('fill-form-btn').style.display = 'block';
+            } catch (error) {
+                document.getElementById('loading').remove();
+                history.innerHTML += `<div class="bot-msg" style="color:#ff3333;">Error connecting to Logix AI.</div>`;
+            }
+        }
+    
+        function sendToQuoteForm() {
+            // Targets the specific ID "project" from your HTML form
+            const quoteInput = document.getElementById('project'); 
+            
+            if (quoteInput) {
+                quoteInput.value = "From AI Brainstorming session:\n\n" + lastAiResponse;
+                quoteInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                toggleChat(); 
+                
+                // Highlight the form briefly to show it was updated
+                quoteInput.style.transition = 'background-color 0.5s';
+                quoteInput.style.backgroundColor = 'rgba(0, 229, 255, 0.2)';
+                setTimeout(() => quoteInput.style.backgroundColor = '', 1000);
+            }
+        }
+    </script>
 </body>
 </html>
