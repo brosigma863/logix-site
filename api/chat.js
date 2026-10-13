@@ -13,7 +13,7 @@ module.exports = async function handler(req, res) {
 
     // Vercel securely injects your API key here
     const apiKey = process.env.GEMINI_API_KEY; 
-    const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+    const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent?key=${apiKey}`;
 
     try {
         const response = await fetch(endpoint, {
