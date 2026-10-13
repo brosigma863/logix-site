@@ -110,9 +110,9 @@
 <body class="font-sans text-gray-200 antialiased selection:bg-logix-accent selection:text-gray-900 overflow-x-hidden bg-logix-dark">
 
     <!-- Top Announcement Banner -->
-    <div class="bg-gradient-to-r from-blue-900 via-logix-dark to-blue-900 text-white py-2.5 px-4 relative overflow-hidden text-center z-[60] text-sm border-b border-white/10">
+    <div class="bg-gradient-to-r from-blue-900 via-logix-dark to-blue-900 text-white py-1.5 md:py-2.5 px-4 relative overflow-hidden text-center z-[60] text-xs md:text-sm border-b border-white/10" id="announcement-banner">
         <p class="relative z-10 font-medium">
-            <span class="text-logix-accent font-bold tracking-wider uppercase text-xs mr-2 drop-shadow-md">Limited Time Offer</span> 
+            <span class="text-logix-accent font-bold tracking-wider uppercase text-[10px] md:text-xs mr-2 drop-shadow-md">Limited Time Offer</span> 
             <span class="hidden sm:inline text-gray-300">Enjoy a 20% Discount on your first custom build order.</span>
             <span class="sm:hidden text-gray-300">20% off your first custom order!</span>
             <a href="#order" class="ml-2 inline-flex items-center hover:text-white text-logix-accent transition-colors font-semibold underline decoration-logix-accent/50 underline-offset-4">
@@ -122,13 +122,13 @@
     </div>
 
     <!-- Glassmorphic Navbar -->
-    <nav class="fixed top-[44px] w-full z-50 transition-all duration-500" id="navbar">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
-            <div class="glass-panel rounded-2xl flex justify-between items-center h-16 px-6">
+    <nav class="fixed top-[32px] md:top-[44px] w-full z-50 transition-all duration-500" id="navbar">
+        <div class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 mt-2 md:mt-4">
+            <div class="glass-panel rounded-xl md:rounded-2xl flex justify-between items-center h-12 md:h-16 px-4 md:px-6">
                 <!-- Logo -->
-                <div class="flex-shrink-0 flex items-center gap-3 group cursor-pointer" onclick="window.scrollTo(0,0)">
-                    <img src="logo.png" alt="Logix Logo" class="h-8 w-auto invert opacity-90 group-hover:opacity-100 transition-opacity">
-                    <span class="font-serif font-bold text-2xl tracking-wide text-white group-hover:text-logix-accent transition-colors">LOGIX</span>
+                <div class="flex-shrink-0 flex items-center gap-2 md:gap-3 group cursor-pointer" onclick="window.scrollTo(0,0)">
+                    <img src="logo.png" alt="Logix Logo" class="h-6 md:h-8 w-auto invert opacity-90 group-hover:opacity-100 transition-opacity">
+                    <span class="font-serif font-bold text-xl md:text-2xl tracking-wide text-white group-hover:text-logix-accent transition-colors">LOGIX</span>
                 </div>
                 
                 <!-- Desktop Menu -->
@@ -142,7 +142,7 @@
                 <!-- Mobile Menu Button -->
                 <div class="md:hidden flex items-center">
                     <button id="mobile-menu-button" class="text-gray-300 hover:text-white focus:outline-none">
-                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg class="h-5 w-5 md:h-6 md:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
                         </svg>
                     </button>
@@ -151,7 +151,7 @@
         </div>
         
         <!-- Mobile Menu Panel -->
-        <div id="mobile-menu" class="md:hidden hidden absolute w-full px-4 mt-2">
+        <div id="mobile-menu" class="md:hidden hidden absolute w-full px-2 mt-2">
             <div class="glass-panel rounded-xl px-4 pt-2 pb-6 space-y-2 border border-white/10">
                 <a href="#about" class="block px-3 py-3 text-sm font-medium text-gray-200 hover:bg-white/5 rounded-md">About</a>
                 <a href="#work" class="block px-3 py-3 text-sm font-medium text-gray-200 hover:bg-white/5 rounded-md">Gadgets</a>
@@ -214,7 +214,7 @@
                         Innovation for <br><span class="text-logix-accent italic">Everyone.</span>
                     </h2>
                     <p class="text-xl md:text-2xl text-gray-300 leading-relaxed font-light mb-6 drop-shadow-lg">
-                        Integrating custom ESP32 architecture with sensory arrays. Watch your concepts physically engineer themselves.
+                        Integrating custom architecture with your imagination. Watch your concepts physically engineer themselves.
                     </p>
                     <p class="text-base text-gray-400 leading-relaxed drop-shadow-lg mb-6">
                         At Logix, we firmly believe that high-quality, custom-engineered gadgets shouldn't be an exclusive luxury. We dedicate ourselves to designing and building personalized technological solutions for everyday life. By streamlining our manufacturing process and focusing on practical design, we deliver exceptional quality at prices that make sense for individuals and small businesses alike.
@@ -244,10 +244,10 @@
                     </div>
                     <h2 class="font-serif text-5xl lg:text-6xl text-white leading-tight">Technology built <br><span class="text-logix-accent italic">for reality.</span></h2>
                     <p class="text-xl text-gray-300 leading-relaxed font-light">
-                        At Logix, we firmly believe that high-quality, custom-engineered gadgets shouldn't be an exclusive luxury.
+                        At Logix, we firmly believe that high-quality, custom-engineered gadgets shouldn't be a luxury.
                     </p>
                     <p class="text-base text-gray-500 leading-relaxed">
-                        We dedicate ourselves to designing and building personalized technological solutions for everyday life. By streamlining our manufacturing process and focusing on practical design, we deliver exceptional quality at prices that make sense for individuals and small businesses alike.
+                        We dedicate ourselves to designing and building personalized advanced technological solutions for everyday life. For all
                     </p>
                 </div>
             </div>
@@ -411,7 +411,7 @@
                                 name="Project" 
                                 rows="4" 
                                 class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:border-logix-accent focus:bg-white/10 focus:ring-0 text-white text-base placeholder-gray-600 resize-none transition-all" 
-                                placeholder="E.g., I need a battery-powered sensor..." 
+                                placeholder="What do you want to get made?" 
                                 required></textarea>
                         </div>
                         
@@ -524,12 +524,18 @@
         let navScrolled = false;
         window.addEventListener('scroll', () => {
             const scrolled = window.scrollY > 20;
+            const isMobileView = window.innerWidth < 768;
+            const defaultTop = isMobileView ? 'top-[32px]' : 'top-[44px]';
+            
             if (scrolled === navScrolled) return;
             navScrolled = scrolled;
+            
             if (scrolled) {
-                navbar.classList.replace('top-[44px]', 'top-2');
+                navbar.classList.remove('top-[32px]', 'top-[44px]');
+                navbar.classList.add('top-2');
             } else {
-                navbar.classList.replace('top-2', 'top-[44px]');
+                navbar.classList.remove('top-2');
+                navbar.classList.add(defaultTop);
             }
         }, { passive: true });
 
@@ -1077,8 +1083,9 @@
         scene.fog = new THREE.FogExp2(0x030508, 0.04);
 
         const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
-        const isMobile = window.innerWidth < 768;
-        camera.position.set(0, 2, isMobile ? 18 : 12);
+        // Change from isMobile ? 18 : 12 to 25 : 12
+        let isMobile = window.innerWidth < 768; // Make this a let, not const
+        camera.position.set(0, 2, isMobile ? 25 : 12);
         camera.lookAt(0, 0, 0);
 
         const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
@@ -1250,9 +1257,16 @@
         window.addEventListener('resize', () => {
             clearTimeout(resize3DTimer);
             resize3DTimer = setTimeout(() => {
+                isMobile = window.innerWidth < 768; // Recalculate breakpoint
                 camera.aspect = window.innerWidth / window.innerHeight;
                 camera.updateProjectionMatrix();
                 renderer.setSize(window.innerWidth, window.innerHeight);
+                
+                // Keep camera responsive on resize if it hasn't scrolled into the animation yet
+                if (masterGroup.position.y > 5) {
+                    camera.position.set(0, 2, isMobile ? 25 : 12);
+                }
+                
                 if (sceneVisible) renderer.render(scene, camera);
             }, 150);
         });
