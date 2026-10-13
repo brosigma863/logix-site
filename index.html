@@ -124,6 +124,12 @@
         #chat-input { flex: 1; background-color: #0a0f1c; border: 1px solid var(--logix-border); color: #fff; padding: 10px; border-radius: 6px; outline: none; }
         .chat-input-area button { background-color: #00e5ff; color: #000; border: none; padding: 0 16px; border-radius: 6px; font-weight: 600; cursor: pointer; }
         #fill-form-btn { margin: 0 12px 12px 12px; background-color: var(--logix-surface); color: #fff; border: 1px dashed #52525b; padding: 10px; border-radius: 6px; font-size: 13px; cursor: pointer; }
+        @keyframes pulse {
+    0% { opacity: 0.4; }
+    50% { opacity: 1; }
+    100% { opacity: 0.4; }
+}
+.loading-pulse { animation: pulse 1.5s infinite; }
     </style>
 </head>
 <body class="font-sans text-gray-200 antialiased selection:bg-logix-accent selection:text-gray-900 overflow-x-hidden bg-logix-dark">
@@ -1328,7 +1334,7 @@
         
         history.innerHTML += `<div class="user-msg">${message}</div>`;
         input.value = '';
-        history.innerHTML += `<div class="bot-msg" id="loading">Thinking...</div>`;
+        history.innerHTML += '<div class="bot-msg loading-pulse" id="loading">⚙️ Engineering parts list...</div>';
         
         // Auto-scroll to bottom
         history.scrollTop = history.scrollHeight;
