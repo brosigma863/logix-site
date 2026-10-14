@@ -101,7 +101,7 @@
         }
 
         /* 3D Scrollytelling Section Specifics */
-        .innovation-section { height: 350vh; position: relative; z-index: 5; background: #0a0f1c; }
+        .innovation-section { height: 220vh; position: relative; z-index: 5; background: #0a0f1c; }
         .sticky-3d-container { position: sticky; top: 0; height: 100vh; width: 100%; overflow: hidden; }
         #webgl-canvas { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
         .innovation-text-layer { position: absolute; inset: 0; display: flex; align-items: center; padding: 0 5vw; z-index: 10; pointer-events: none; }
@@ -109,7 +109,7 @@
     .innovation-text-layer { position: absolute; inset: 0; display: flex; align-items: center; padding: 0 5vw; z-index: 10; pointer-events: none; }
 
         /* Mobile Overrides: Disable 3D Section & Keep Navbar Visible */
-        html, body { max-width: 100%; overflow-x: hidden; overflow-x: clip; }
+        html, body { max-width: 100%; overflow-x: clip; }
         @media (max-width: 767px) {
             #navbar { top: 8px !important; z-index: 999 !important; }
             #navbar .glass-panel {
@@ -124,62 +124,91 @@
             .innovation-text-layer { position: relative !important; inset: auto !important; padding: 0 1.5rem !important; pointer-events: auto !important; }
             #innovation-text { opacity: 1 !important; transform: none !important; }
         }
-        /* --- ADD LOGIX AI CHAT CSS HERE --- */
-        :root { --logix-surface: #18181b; --logix-border: #27272a; }
-        #logix-chat-btn { position: fixed; bottom: 24px; right: 24px; z-index: 1000; background-color: #00e5ff; color: #000; border: none; padding: 14px 24px; border-radius: 50px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 12px rgba(0,229,255, 0.3); animation: pulse-glow 2s infinite; }
+       /* --- ADD LOGIX AI CHAT CSS HERE --- */
+       :root { --logix-surface: #18181b; --logix-border: #27272a; }
+        #logix-chat-btn { 
+            position: fixed; bottom: 24px; right: 24px; z-index: 1000; 
+            background-color: #00e5ff; color: #000; border: none; 
+            padding: 14px 24px; border-radius: 50px; font-weight: 600; 
+            cursor: pointer; box-shadow: 0 4px 12px rgba(0,229,255, 0.3); 
+            animation: pulse-glow 2s infinite; 
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+        }
+        #logix-chat-btn.chat-btn-hidden {
+            transform: translateY(100px); opacity: 0; pointer-events: none;
+        }
         #logix-chat-btn:hover { transform: translateY(-2px); animation: none; }
         @keyframes pulse-glow { 0% { box-shadow: 0 0 0 0 rgba(0,229,255, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(0,229,255, 0); } 100% { box-shadow: 0 0 0 0 rgba(0,229,255, 0); } }
-        #logix-chat-window { position: fixed; bottom: 85px; right: 24px; width: 360px; height: 520px; background-color: #0a0f1c; border: 1px solid var(--logix-border); border-radius: 12px; z-index: 1000; box-shadow: 0 12px 40px rgba(0, 0, 0, 0.8); display: flex; flex-direction: column; overflow: hidden; animation: slide-up 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+        
+        #logix-chat-window { 
+            position: fixed; bottom: 85px; right: 24px; 
+            width: 360px; max-width: calc(100vw - 32px);
+            height: 500px; max-height: calc(100dvh - 110px);
+            background-color: #0a0f1c; border: 1px solid var(--logix-border); 
+            border-radius: 12px; z-index: 1000; 
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.8); 
+            display: flex; flex-direction: column; 
+            overflow: hidden; box-sizing: border-box;
+            animation: slide-up 0.3s cubic-bezier(0.16, 1, 0.3, 1); 
+        }
         @keyframes slide-up { from { opacity: 0; transform: translateY(20px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
-        .chat-header { background-color: var(--logix-surface); color: #fff; padding: 16px; font-weight: 600; border-bottom: 1px solid var(--logix-border); }
-        #chat-history { flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
+        
+        .chat-header { 
+            flex-shrink: 0; background-color: var(--logix-surface); 
+            color: #fff; padding: 14px 16px; font-weight: 600; 
+            border-bottom: 1px solid var(--logix-border); 
+        }
+        #chat-history { 
+            flex: 1 1 auto; min-height: 0; padding: 16px; 
+            overflow-y: auto; display: flex; flex-direction: column; gap: 12px; 
+        }
         .user-msg, .bot-msg { padding: 12px 16px; font-size: 14px; max-width: 85%; word-wrap: break-word; }
         .bot-msg { background-color: var(--logix-surface); color: #fff; border: 1px solid var(--logix-border); border-radius: 12px 12px 12px 2px; align-self: flex-start; }
         .user-msg { background-color: #00e5ff; color: #000; border-radius: 12px 12px 2px 12px; align-self: flex-end; font-weight: 500; }
-        .chat-input-area { display: flex; padding: 12px; background-color: var(--logix-surface); border-top: 1px solid var(--logix-border); gap: 8px; }
-        #chat-input { flex: 1; background-color: #0a0f1c; border: 1px solid var(--logix-border); color: #fff; padding: 10px; border-radius: 6px; outline: none; font-size: 16px; }
-        .chat-input-area button { background-color: #00e5ff; color: #000; border: none; padding: 0 16px; border-radius: 6px; font-weight: 600; cursor: pointer; }
-        #fill-form-btn { margin: 0 12px 12px 12px; background-color: var(--logix-surface); color: #fff; border: 1px dashed #52525b; padding: 10px; border-radius: 6px; font-size: 13px; cursor: pointer; }
+        
+        .chat-input-area { 
+            flex-shrink: 0; display: flex; align-items: center; 
+            padding: 10px 12px; background-color: var(--logix-surface); 
+            border-top: 1px solid var(--logix-border); gap: 8px; 
+            width: 100%; box-sizing: border-box;
+        }
+        #chat-input { 
+            flex: 1 1 auto; min-width: 0; width: 100%;
+            background-color: #0a0f1c; border: 1px solid var(--logix-border); 
+            color: #fff; padding: 10px 12px; border-radius: 6px; 
+            outline: none; font-size: 16px; box-sizing: border-box;
+        }
+        .chat-input-area button { 
+            flex-shrink: 0; background-color: #00e5ff; color: #000; 
+            border: none; padding: 10px 16px; border-radius: 6px; 
+            font-weight: 600; cursor: pointer; white-space: nowrap;
+        }
+        #fill-form-btn { 
+            flex-shrink: 0; margin: 0 12px 12px 12px; 
+            background-color: var(--logix-surface); color: #fff; 
+            border: 1px dashed #52525b; padding: 10px; 
+            border-radius: 6px; font-size: 13px; cursor: pointer; 
+        }
         @keyframes pulse {
-    0% { opacity: 0.4; }
-    50% { opacity: 1; }
-    100% { opacity: 0.4; }
-}
-.loading-pulse { animation: pulse 1.5s infinite; }
-#logix-chat-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
-}
-#logix-chat-btn.chat-btn-hidden {
-    transform: translateY(100px);
-    opacity: 0;
-    pointer-events: none;
-}
-@media (max-width: 767px) {
-    #logix-chat-btn {
-        width: 54px;
-        height: 54px;
-        padding: 0;
-        border-radius: 50%;
-        bottom: 16px;
-        right: 16px;
-        font-size: 22px;
-    }
-    #logix-chat-btn .chat-btn-text {
-        display: none;
-    }
-    #logix-chat-window {
-        right: 16px;
-        left: 16px;
-        bottom: 80px;
-        width: auto;
-        height: 65dvh;
-        max-height: 460px;
-    }
-}
+            0% { opacity: 0.4; }
+            50% { opacity: 1; }
+            100% { opacity: 0.4; }
+        }
+        .loading-pulse { animation: pulse 1.5s infinite; }
+
+        @media (max-width: 767px) {
+            #logix-chat-btn {
+                width: 54px; height: 54px; padding: 0;
+                border-radius: 50%; bottom: 16px; right: 16px; font-size: 22px;
+            }
+            #logix-chat-btn .chat-btn-text { display: none; }
+            #logix-chat-window {
+                right: 12px; left: 12px; bottom: 78px;
+                width: auto; max-width: none;
+                height: 60dvh; max-height: calc(100dvh - 100px);
+            }
+        }
     </style>
 </head>
 <body class="font-sans text-gray-200 antialiased selection:bg-logix-accent selection:text-gray-900 overflow-x-hidden bg-logix-dark">
@@ -1277,33 +1306,29 @@
             wireDebugGroup.add(jumperGroup);
         });
 
-        // ==========================================
+       // ==========================================
         // GSAP ANIMATIONS
         // ==========================================
         
-        masterGroup.position.y = 15; // Starts off screen
+        masterGroup.position.y = 8; // Starts closer so it drops in sync with text
         wireAnimGroup.position.x = 10; // Starts pushed out to the right
 
         const tl = gsap.timeline({
-            scrollTrigger: { trigger: "#innovation-trigger", start: "top top", end: "bottom bottom", scrub: 1 }
+            scrollTrigger: { trigger: "#innovation-trigger", start: "top top", end: "bottom bottom", scrub: 0.6 }
         });
 
-        // 1. Drop entire assembly into view
-        tl.fromTo("#innovation-text", { opacity: 0, x: -50 }, { opacity: 1, x: 0, duration: 1 }, 0);
-        tl.to(masterGroup.position, { y: 0, duration: 1.5, ease: "power2.out" }, 0); 
+        // 1. Drop text AND 3D board into view together at the exact same time
+        tl.fromTo("#innovation-text", { opacity: 0, y: -120 }, { opacity: 1, y: 0, duration: 1.2, ease: "power2.out" }, 0);
+        tl.to(masterGroup.position, { y: 0, duration: 1.2, ease: "power2.out" }, 0); 
+        tl.to(masterGroup.rotation, { x: 0.2, y: -0.1, z: 0.05, duration: 1.2, ease: "power2.out" }, 0);
         
-        // Subtle global tilt for the final cinematic look
-        tl.to(masterGroup.rotation, { x: 0.2, y: -0.1, z: 0.05, duration: 2, ease: "power1.inOut" }, 0);
+        // 2. Extra scroll slides the wires horizontally into the board + camera pan
+        tl.to(wireAnimGroup.position, { x: 0, duration: 1.2, ease: "power2.inOut" }, 1.2);
+        tl.to(camera.position, { x: 1, y: 3, z: isMobile ? 12 : 8, duration: 1.2, ease: "power1.inOut" }, 1.2);
         
-        // 2. The Wires slide horizontally into the board
-        tl.to(wireAnimGroup.position, { x: 0, duration: 1.5, ease: "power2.inOut" }, 1.0);
-        
-        // 3. Camera pan
-        tl.to(camera.position, { x: 1, y: 3, z: isMobile ? 12 : 8, duration: 1.5, ease: "power1.inOut" }, 1.5);
-        
-        // 4. Fade Out cleanly
-        tl.to("#webgl-canvas", { opacity: 0, duration: 0.5 }, 4.5);
-        tl.to("#innovation-text", { opacity: 0, y: -50, duration: 0.5 }, 4.5);
+        // 3. Fade Out cleanly right after plug connects (no dead scroll gap)
+        tl.to("#webgl-canvas", { opacity: 0, duration: 0.4 }, 2.6);
+        tl.to("#innovation-text", { opacity: 0, y: -40, duration: 0.4 }, 2.6);
 
         // Render Loop - only runs while the 3D section is on screen
         let sceneVisible = false;
