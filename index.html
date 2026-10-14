@@ -1310,37 +1310,51 @@
         // GSAP ANIMATIONS
         // ==========================================
         
-        masterGroup.position.y = 8; // Starts closer so it drops in sync with text
+        masterGroup.position.y = 6; // Starts just above the center
         wireAnimGroup.position.x = 10; // Starts pushed out to the right
 
         const tl = gsap.timeline({
-            scrollTrigger: { trigger: "#innovation-trigger", start: "top top", end: "bottom bottom", scrub: 0.6 }
+            scrollTrigger: { 
+                trigger: "#innovation-trigger", 
+                start: "top top", 
+                end: "+=1100", // Total scroll distance (short & snappy!)
+                pin: true,     // Locks the section in the middle of the screen!
+                scrub: 0.5 
+            }
         });
 
-        // 1. Drop text AND 3D board into view together at the exact same time
-        tl.fromTo("#innovation-text", { opacity: 0, y: -120 }, { opacity: 1, y: 0, duration: 1.2, ease: "power2.out" }, 0);
-        tl.to(masterGroup.position, { y: 0, duration: 1.2, ease: "power2.out" }, 0); 
-        tl.to(masterGroup.rotation, { x: 0.2, y: -0.1, z: 0.05, duration: 1.2, ease: "power2.out" }, 0);
+        // STEP 1 (First scroll): Text AND 3D Board come down together at the exact same time
+        tl.fromTo("#innovation-text", 
+            { opacity: 0, y: -100 }, 
+            { opacity: 1, y: 0, duration: 1, ease: "power2.out" }, 
+        0);
+        tl.fromTo(masterGroup.position, 
+            { y: 6 }, 
+            { y: 0, duration: 1, ease: "power2.out" }, 
+        0);
+        tl.to(masterGroup.rotation, 
+            { x: 0.2, y: -0.1, z: 0.05, duration: 1, ease: "power2.out" }, 
+        0);
         
-        // 2. Extra scroll slides the wires horizontally into the board + camera pan
-        tl.to(wireAnimGroup.position, { x: 0, duration: 1.2, ease: "power2.inOut" }, 1.2);
-        tl.to(camera.position, { x: 1, y: 3, z: isMobile ? 12 : 8, duration: 1.2, ease: "power1.inOut" }, 1.2);
+        // STEP 2 (Second scroll): Wires plug horizontally into the board
+        tl.to(wireAnimGroup.position, 
+            { x: 0, duration: 1, ease: "power2.inOut" }, 
+        1.0);
+        tl.to(camera.position, 
+            { x: 1, y: 2.5, z: isMobile ? 12 : 8, duration: 1, ease: "power1.inOut" }, 
+        1.0);
         
         // 3. Fade Out cleanly right after plug connects (no dead scroll gap)
         tl.to("#webgl-canvas", { opacity: 0, duration: 0.4 }, 2.6);
         tl.to("#innovation-text", { opacity: 0, y: -40, duration: 0.4 }, 2.6);
 
-        // Render Loop - only runs while the 3D section is on screen
+        // Render Loop - only runs while the 3D section is on screen    
         let sceneVisible = false;
         let sceneRunning = false;
 
         function animate3D() {
             if (!sceneVisible || document.hidden) { sceneRunning = false; return; }
             requestAnimationFrame(animate3D);
-            const time = performance.now() * 0.002;
-            if (masterGroup.position.y < 1) {
-                masterGroup.position.y = (Math.sin(time) * 0.1);
-            }
             renderer.render(scene, camera);
         }
 
