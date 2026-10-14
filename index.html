@@ -107,7 +107,23 @@
         .innovation-text-layer { position: absolute; inset: 0; display: flex; align-items: center; padding: 0 5vw; z-index: 10; pointer-events: none; }
     /* ... existing styles ... */
     .innovation-text-layer { position: absolute; inset: 0; display: flex; align-items: center; padding: 0 5vw; z-index: 10; pointer-events: none; }
-        
+
+        /* Mobile Overrides: Disable 3D Section & Keep Navbar Visible */
+        html, body { max-width: 100%; overflow-x: hidden; overflow-x: clip; }
+        @media (max-width: 767px) {
+            #navbar { top: 8px !important; z-index: 999 !important; }
+            #navbar .glass-panel {
+                background: rgba(10, 15, 28, 0.9) !important;
+                backdrop-filter: blur(16px) !important;
+                -webkit-backdrop-filter: blur(16px) !important;
+                border: 1px solid rgba(255, 255, 255, 0.15) !important;
+            }
+            .innovation-section { height: auto !important; padding: 5rem 0 !important; }
+            .sticky-3d-container { position: relative !important; height: auto !important; }
+            #webgl-canvas, #3d-error-message { display: none !important; }
+            .innovation-text-layer { position: relative !important; inset: auto !important; padding: 0 1.5rem !important; pointer-events: auto !important; }
+            #innovation-text { opacity: 1 !important; transform: none !important; }
+        }
         /* --- ADD LOGIX AI CHAT CSS HERE --- */
         :root { --logix-surface: #18181b; --logix-border: #27272a; }
         #logix-chat-btn { position: fixed; bottom: 24px; right: 24px; z-index: 1000; background-color: #00e5ff; color: #000; border: none; padding: 14px 24px; border-radius: 50px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 12px rgba(0,229,255, 0.3); animation: pulse-glow 2s infinite; }
@@ -121,7 +137,7 @@
         .bot-msg { background-color: var(--logix-surface); color: #fff; border: 1px solid var(--logix-border); border-radius: 12px 12px 12px 2px; align-self: flex-start; }
         .user-msg { background-color: #00e5ff; color: #000; border-radius: 12px 12px 2px 12px; align-self: flex-end; font-weight: 500; }
         .chat-input-area { display: flex; padding: 12px; background-color: var(--logix-surface); border-top: 1px solid var(--logix-border); gap: 8px; }
-        #chat-input { flex: 1; background-color: #0a0f1c; border: 1px solid var(--logix-border); color: #fff; padding: 10px; border-radius: 6px; outline: none; }
+        #chat-input { flex: 1; background-color: #0a0f1c; border: 1px solid var(--logix-border); color: #fff; padding: 10px; border-radius: 6px; outline: none; font-size: 16px; }
         .chat-input-area button { background-color: #00e5ff; color: #000; border: none; padding: 0 16px; border-radius: 6px; font-weight: 600; cursor: pointer; }
         #fill-form-btn { margin: 0 12px 12px 12px; background-color: var(--logix-surface); color: #fff; border: 1px dashed #52525b; padding: 10px; border-radius: 6px; font-size: 13px; cursor: pointer; }
         @keyframes pulse {
@@ -130,6 +146,40 @@
     100% { opacity: 0.4; }
 }
 .loading-pulse { animation: pulse 1.5s infinite; }
+#logix-chat-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+}
+#logix-chat-btn.chat-btn-hidden {
+    transform: translateY(100px);
+    opacity: 0;
+    pointer-events: none;
+}
+@media (max-width: 767px) {
+    #logix-chat-btn {
+        width: 54px;
+        height: 54px;
+        padding: 0;
+        border-radius: 50%;
+        bottom: 16px;
+        right: 16px;
+        font-size: 22px;
+    }
+    #logix-chat-btn .chat-btn-text {
+        display: none;
+    }
+    #logix-chat-window {
+        right: 16px;
+        left: 16px;
+        bottom: 80px;
+        width: auto;
+        height: 65dvh;
+        max-height: 460px;
+    }
+}
     </style>
 </head>
 <body class="font-sans text-gray-200 antialiased selection:bg-logix-accent selection:text-gray-900 overflow-x-hidden bg-logix-dark">
@@ -272,7 +322,7 @@
                         At Logix, we firmly believe that high-quality, custom-engineered gadgets shouldn't be a luxury.
                     </p>
                     <p class="text-base text-gray-500 leading-relaxed">
-                        We dedicate ourselves to designing and building personalized advanced technological solutions for everyday life. For all
+                        We dedicate ourselves to designing and building personalized advanced technological solutions for everyday life. For all creators, businesses, and everyday innovators
                     </p>
                 </div>
             </div>
@@ -290,7 +340,7 @@
                     <img src="gadgets.jpg" onerror="this.src='https://images.unsplash.com/photo-1581092160562-40aa08e78837?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'" alt="Technician working on a gadget" class="w-full h-80 sm:h-96 object-cover rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] relative z-10 border border-white/10">
                 </div>
                 
-                <div class="w-full md:w-1/2 lg:w-7/12 space-y-8">
+                <div class="w-full md:w-1/2 lg:w-7/12 space-y-8">   
                     <div class="inline-flex items-center gap-2 px-4 py-1.5 bg-white/5 border border-white/10 text-gray-300 rounded-full text-xs font-semibold tracking-widest uppercase">
                         <span class="w-2 h-2 rounded-full bg-purple-500 animate-pulse"></span> Our Craft
                     </div>
@@ -388,28 +438,28 @@
             <div class="glass-panel rounded-3xl overflow-hidden flex flex-col lg:flex-row border border-white/10 shadow-[0_0_50px_rgba(0,0,0,0.5)]">
                 
                 <!-- Form Image Side -->
-                <div class="w-full lg:w-5/12 relative min-h-[300px] lg:min-h-full border-r border-white/10">
+                <div class="w-full lg:w-5/12 relative border-b lg:border-b-0 lg:border-r border-white/10">
                     <img src="order.jpg" alt="Prototyping setup" class="absolute inset-0 w-full h-full object-cover opacity-50 mix-blend-overlay">
                     <div class="absolute inset-0 bg-gradient-to-br from-logix-blue/80 to-logix-dark/90"></div>
                     
-                    <div class="absolute inset-0 p-12 flex flex-col justify-between z-10">
+                    <div class="relative lg:absolute lg:inset-0 p-6 sm:p-10 lg:p-12 flex flex-col justify-between z-10">
                         <div>
-                            <span class="inline-block px-3 py-1 rounded text-logix-accent bg-logix-accent/10 border border-logix-accent/20 text-xs font-bold tracking-widest uppercase mb-6">Start Here</span>
-                            <h3 class="font-serif text-4xl text-white mb-4 drop-shadow-md">Let's build it.</h3>
-                            <p class="text-gray-300 text-lg font-light leading-relaxed">Tell us about your project, and our engineering team will get back to you with a feasibility report and quote.</p>
+                            <span class="inline-block px-3 py-1 rounded text-logix-accent bg-logix-accent/10 border border-logix-accent/20 text-xs font-bold tracking-widest uppercase mb-4 lg:mb-6">Start Here</span>
+                            <h3 class="font-serif text-3xl sm:text-4xl text-white mb-3 lg:mb-4 drop-shadow-md">Let's build it.</h3>
+                            <p class="text-gray-300 text-base sm:text-lg font-light leading-relaxed">Tell us about your project, and our engineering team will get back to you with a feasibility report and quote.</p>
                         </div>
-                        <div class="mt-8 space-y-6 text-gray-300">
+                        <div class="mt-6 lg:mt-8 pt-6 border-t border-white/10 lg:border-t-0 space-y-4 sm:space-y-6 text-gray-300 text-sm sm:text-base">
                             <div class="flex items-center group">
-                                <div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center mr-4 group-hover:bg-logix-accent transition-colors">
+                                <div class="w-10 h-10 shrink-0 rounded-full bg-white/10 flex items-center justify-center mr-4 group-hover:bg-logix-accent transition-colors">
                                     <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
                                 </div>
-                                hello@logix-tech.com
+                                <span class="break-all">hello@logix-tech.com</span>
                             </div>
                             <div class="flex items-center group">
-                                <div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center mr-4 group-hover:bg-logix-accent transition-colors">
+                                <div class="w-10 h-10 shrink-0 rounded-full bg-white/10 flex items-center justify-center mr-4 group-hover:bg-logix-accent transition-colors">
                                     <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                                 </div>
-                                New Delhi, India
+                                <span>New Delhi, India</span>
                             </div>
                         </div>
                     </div>
@@ -1119,7 +1169,9 @@
         renderer.shadowMap.enabled = true;
         renderer.toneMapping = THREE.ACESFilmicToneMapping;
         renderer.toneMappingExposure = 1.2;
-        container3D.appendChild(renderer.domElement);
+        if (window.innerWidth >= 768) {
+    container3D.appendChild(renderer.domElement);
+}
 
         const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
         scene.add(ambientLight);
@@ -1166,9 +1218,10 @@
         const loader = new THREE.GLTFLoader();
         let boardLoaded = false;
         function loadBoard() {
-        if (boardLoaded) return;
-        boardLoaded = true;
-        loader.load('./esp32.glb', function(gltf) {
+            if (window.innerWidth < 768) return;
+            if (boardLoaded) return;
+            boardLoaded = true;
+            loader.load('./esp32.glb', function(gltf) {
             const espModel = gltf.scene;
             
             // Auto Scale & Center
@@ -1302,9 +1355,15 @@
       </script>
       <script defer src="/<unique-path>/script.js"></script>
        <!-- --- LOGIX AI CHAT WIDGET HTML --- -->
-<button id="logix-chat-btn" onclick="toggleChat()">💬 Brainstorm an Idea</button>
+<button id="logix-chat-btn" onclick="toggleChat()" aria-label="Brainstorm an Idea">
+    <span>💬</span>
+    <span class="chat-btn-text">Brainstorm an Idea</span>
+</button>
 <div id="logix-chat-window" style="display: none;">
-    <div class="chat-header">Logix Guide</div>
+    <div class="chat-header" style="display: flex; justify-content: space-between; align-items: center;">
+        <span>Logix Guide</span>
+        <button onclick="toggleChat()" style="background: none; border: none; color: #9ca3af; font-size: 18px; cursor: pointer; padding: 0 4px;">✕</button>
+    </div>
     <div id="chat-history">
         <div class="bot-msg">Hi! I'm the Logix AI. Tell me about your business or a daily annoyance, and I'll pitch a custom gadget we can build for you!</div>
     </div>
@@ -1323,7 +1382,28 @@
         chat.style.display = chat.style.display === 'none' ? 'flex' : 'none';
     }
 
-    let lastAiResponse = ""; 
+    // Hide chat button when scrolling down, show when scrolling up
+    let lastChatScrollY = window.scrollY;
+    const logixChatBtn = document.getElementById('logix-chat-btn');
+    const logixChatWindow = document.getElementById('logix-chat-window');
+
+    window.addEventListener('scroll', () => {
+        const currentScrollY = window.scrollY;
+        const isChatOpen = logixChatWindow.style.display === 'flex';
+
+        if (isChatOpen || currentScrollY < 60) {
+            logixChatBtn.classList.remove('chat-btn-hidden');
+        } else if (currentScrollY > lastChatScrollY + 8) {
+            logixChatBtn.classList.add('chat-btn-hidden');
+        } else if (currentScrollY < lastChatScrollY - 8) {
+            logixChatBtn.classList.remove('chat-btn-hidden');
+        }
+
+        lastChatScrollY = currentScrollY;
+    }, { passive: true });
+
+    const cleanDetails = Array.isArray(lastAiResponse) ? lastAiResponse.join('\n') : lastAiResponse;
+quoteInput.value = "From AI Brainstorming session:\n\n" + cleanDetails;
 
     async function sendMessage() {
         const input = document.getElementById('chat-input');
