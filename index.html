@@ -247,7 +247,7 @@
     </div>
 
     <!-- Glassmorphic Navbar -->
-    <nav class="fixed top-[32px] md:top-[44px] inset-x-0 max-w-[100vw] z-50 transition-all duration-500" id="navbar">
+    <nav class="fixed top-[20px] md:top-[32px] inset-x-0 max-w-[100vw] z-50 transition-all duration-500" id="navbar">
         <div class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-2 md:mt-4">
             <div class="glass-panel rounded-xl md:rounded-2xl flex justify-between items-center h-12 md:h-16 px-4 md:px-6">
                 <!-- Logo -->
@@ -750,13 +750,13 @@
         window.addEventListener('scroll', () => {
             const scrolled = window.scrollY > 20;
             const isMobileView = window.innerWidth < 768;
-            const defaultTop = isMobileView ? 'top-[32px]' : 'top-[44px]';
+            const defaultTop = isMobileView ? 'top-[20px]' : 'top-[32px]';
             
             if (scrolled === navScrolled) return;
             navScrolled = scrolled;
             
             if (scrolled) {
-                navbar.classList.remove('top-[32px]', 'top-[44px]');
+                navbar.classList.remove('top-[20px]', 'top-[32px]');
                 navbar.classList.add('top-2');
             } else {
                 navbar.classList.remove('top-2');
@@ -1181,8 +1181,8 @@
                     const distMouse = Math.sqrt(dxMouse * dxMouse + dyMouse * dyMouse);
                     if (distMouse < mouseConnectionDistance && distMouse > 0.001) {
                         const force = (mouseConnectionDistance - distMouse) / mouseConnectionDistance;
-                        this.x += (dxMouse / distMouse) * force * 1.5 * step;
-                        this.y += (dyMouse / distMouse) * force * 1.5 * step;
+                        this.x += (dxMouse / distMouse) * force * 15 * step;
+                        this.y += (dyMouse / distMouse) * force * 15 * step;
                     }
                 }
             }
@@ -1431,7 +1431,7 @@
         // GSAP ANIMATIONS
         // ==========================================
         
-        masterGroup.position.y = -1; // Lowered to center in the viewport
+        masterGroup.position.y = 4; // Starts off screen higher
         wireAnimGroup.position.x = 10; // Starts pushed out to the right
 
         const tl = gsap.timeline({
@@ -1444,15 +1444,15 @@
             }
         });
 
-        // STEP 1 (First scroll): Text AND 3D Board come down together at the exact same time
+        // STEP 1 (First scroll): Text AND 3D Board come down together
         tl.fromTo("#webgl-canvas", { opacity: 0 }, { opacity: 1, duration: 0.35, ease: "power1.out" }, 0);
         tl.fromTo("#innovation-text", 
             { opacity: 0, y: -100 }, 
             { opacity: 1, y: 0, duration: 1, ease: "power2.out" }, 
         0);
         tl.fromTo(masterGroup.position, 
-            { y: -1 }, 
-            { y: 0, duration: 1, ease: "power2.out" }, 
+            { y: 4 }, 
+            { y: -1.5, duration: 1, ease: "power2.out" }, 
         0);
         tl.to(masterGroup.rotation, 
             { x: 0.2, y: -0.1, z: 0.05, duration: 1, ease: "power2.out" }, 
@@ -1466,7 +1466,7 @@
             { x: 1, y: 0.5, z: isMobile ? 12 : 8, duration: 1, ease: "power1.inOut" }, 
         1.0);
         
-        // 3. Fade Out cleanly right after plug connects (no dead scroll gap)
+        // 3. Fade Out cleanly right after plug connects
         tl.to("#webgl-canvas", { opacity: 0, duration: 0.4 }, 2.6);
         tl.to("#innovation-text", { opacity: 0, y: -40, duration: 0.4 }, 2.6);
 
