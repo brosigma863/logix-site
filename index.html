@@ -97,17 +97,25 @@
 
         /* Reviews infinite marquee */
         .review-marquee {
-            overflow: hidden;
+            overflow-x: auto;
+            overflow-y: hidden;
             -webkit-mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
             mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            cursor: grab;
         }
+        .review-marquee::-webkit-scrollbar { display: none; }
         .review-track { display: flex; width: max-content; animation: review-scroll 70s linear infinite; will-change: transform; }
-        .review-marquee:hover .review-track { animation-play-state: paused; }
+        .half-star { position: relative; display: inline-block; color: rgba(255,255,255,0.2); }
+        .half-star::before { content: '★'; position: absolute; left: 0; width: 50%; overflow: hidden; color: #00e5ff; }
+        
+        /* Pause on hover or active touch/scroll */
+        .review-marquee:hover .review-track, 
+        .review-marquee:active .review-track { animation-play-state: paused; }
+        
         @keyframes review-scroll { from { transform: translate3d(0, 0, 0); } to { transform: translate3d(-50%, 0, 0); } }
-        @media (prefers-reduced-motion: reduce) {
-            .review-marquee { overflow-x: auto; }
-            .review-track { animation: none; }
-        }
+        @media (prefers-reduced-motion: reduce) { .review-track { animation: none; } }
 
         /* Glowing text effect */
         .text-glow {
@@ -119,8 +127,6 @@
         .sticky-3d-container { position: sticky; top: 0; height: 100vh; width: 100%; overflow: hidden; }
         #webgl-canvas { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
         .innovation-text-layer { position: absolute; inset: 0; display: flex; align-items: center; padding: 0 5vw; z-index: 10; pointer-events: none; }
-    /* ... existing styles ... */
-    .innovation-text-layer { position: absolute; inset: 0; display: flex; align-items: center; padding: 0 5vw; z-index: 10; pointer-events: none; }
 
         /* Mobile Overrides: Disable 3D Section & Keep Navbar Visible */
         html, body { max-width: 100%; overflow-x: clip; }
@@ -138,6 +144,7 @@
             .innovation-text-layer { position: relative !important; inset: auto !important; padding: 0 1.5rem !important; pointer-events: auto !important; }
             #innovation-text { opacity: 1 !important; transform: none !important; }
         }
+
        /* --- ADD LOGIX AI CHAT CSS HERE --- */
        :root { --logix-surface: #18181b; --logix-border: #27272a; }
         #logix-chat-btn { 
@@ -225,7 +232,7 @@
         }
     </style>
 </head>
-<body class="font-sans text-gray-200 antialiased selection:bg-logix-accent selection:text-gray-900 overflow-x-hidden bg-logix-dark">
+<body class="font-sans text-gray-200 antialiased selection:bg-logix-accent selection:text-gray-900 overflow-x-clip bg-logix-dark">
 
     <!-- Top Announcement Banner -->
     <div class="bg-gradient-to-r from-blue-900 via-logix-dark to-blue-900 text-white py-1.5 md:py-2.5 px-4 relative overflow-hidden text-center z-[60] text-xs md:text-sm border-b border-white/10" id="announcement-banner">
@@ -348,7 +355,7 @@
     </section>
 
     <!-- TECHNOLOGY BUILT FOR REALITY ABOUT SECTION -->
-    <section id="about" class="py-24 relative z-20 bg-logix-dark border-t border-white/5">
+    <section id="about" class="py-24 relative z-20 bg-logix-dark border-t border-white/5 overflow-hidden">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex flex-col md:flex-row items-center gap-12 lg:gap-20 reveal">
                 <div class="w-full md:w-1/2 lg:w-5/12 shrink-0 tilt-effect relative group cursor-crosshair">
@@ -365,7 +372,7 @@
                         At Logix, we firmly believe that high-quality, custom-engineered gadgets shouldn't be a luxury.
                     </p>
                     <p class="text-base text-gray-500 leading-relaxed">
-                        We dedicate ourselves to designing and building personalized advanced technological solutions for everyday life. For all creators, businesses, and everyday innovators
+                        We dedicate ourselves to designing and building personalized advanced technological solutions for everyday life. For all creators, businesses, and everyday innovators.
                     </p>
                 </div>
             </div>
@@ -481,7 +488,7 @@
         <div class="review-marquee">
             <div class="review-track" id="review-track">
                 <article class="review-card flex-none w-80 sm:w-96 mr-6 p-6 rounded-2xl glass-panel border border-white/10 shadow-xl">
-                    <div class="text-logix-accent tracking-widest text-lg mb-3" aria-label="5 out of 5 stars">★★★★★</div>
+                    <div class="text-logix-accent tracking-widest text-lg mb-3" aria-label="4.5 out of 5 stars">★★★★<span class="half-star">★</span></div>
                     <p class="text-gray-300 leading-relaxed mb-6">"Ordered a custom sensor board for my balcony garden. Arrived working on day one and the documentation was clearer than most store-bought kits."</p>
                     <div class="flex items-center">
                         <div class="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-400 to-blue-600 flex items-center justify-center text-sm font-bold text-white mr-3">AM</div>
@@ -492,8 +499,8 @@
                     </div>
                 </article>
                 <article class="review-card flex-none w-80 sm:w-96 mr-6 p-6 rounded-2xl glass-panel border border-white/10 shadow-xl">
-                    <div class="text-logix-accent tracking-widest text-lg mb-3" aria-label="5 out of 5 stars">★★★★★</div>
-                    <p class="text-gray-300 leading-relaxed mb-6">"They turned my rough sketch into a real, polished gadget. Fast replies, no jargon, and the build quality genuinely surprised me."</p>
+                    <div class="text-logix-accent tracking-widest text-lg mb-3" aria-label="4 out of 5 stars">★★★★<span class="text-white/20">★</span></div>
+                    <p class="text-gray-300 leading-relaxed mb-6">"They turned my rough sketch into a real, polished gadget. Fast replies and great build quality. Would love a few more finish options."</p>
                     <div class="flex items-center">
                         <div class="w-10 h-10 rounded-full bg-gradient-to-br from-purple-400 to-pink-500 flex items-center justify-center text-sm font-bold text-white mr-3">PN</div>
                         <div>
@@ -514,8 +521,8 @@
                     </div>
                 </article>
                 <article class="review-card flex-none w-80 sm:w-96 mr-6 p-6 rounded-2xl glass-panel border border-white/10 shadow-xl">
-                    <div class="text-logix-accent tracking-widest text-lg mb-3" aria-label="5 out of 5 stars">★★★★★</div>
-                    <p class="text-gray-300 leading-relaxed mb-6">"We prototyped our smart-lock idea with Logix. Great communication and honest advice on what would actually work."</p>
+                    <div class="text-logix-accent tracking-widest text-lg mb-3" aria-label="4 out of 5 stars">★★★★<span class="text-white/20">★</span></div>
+                    <p class="text-gray-300 leading-relaxed mb-6">"We prototyped our smart-lock idea with Logix. Great communication and honest advice. Delivery took a bit longer than hoped, but it was worth it."</p>
                     <div class="flex items-center">
                         <div class="w-10 h-10 rounded-full bg-gradient-to-br from-orange-400 to-rose-500 flex items-center justify-center text-sm font-bold text-white mr-3">SI</div>
                         <div>
@@ -525,7 +532,7 @@
                     </div>
                 </article>
                 <article class="review-card flex-none w-80 sm:w-96 mr-6 p-6 rounded-2xl glass-panel border border-white/10 shadow-xl">
-                    <div class="text-logix-accent tracking-widest text-lg mb-3" aria-label="5 out of 5 stars">★★★★★</div>
+                    <div class="text-logix-accent tracking-widest text-lg mb-3" aria-label="4.5 out of 5 stars">★★★★<span class="half-star">★</span></div>
                     <p class="text-gray-300 leading-relaxed mb-6">"Third order with them now. Consistent quality every time, and they never make you feel like a small project is a nuisance."</p>
                     <div class="flex items-center">
                         <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-indigo-600 flex items-center justify-center text-sm font-bold text-white mr-3">KM</div>
@@ -536,8 +543,8 @@
                     </div>
                 </article>
                 <article class="review-card flex-none w-80 sm:w-96 mr-6 p-6 rounded-2xl glass-panel border border-white/10 shadow-xl">
-                    <div class="text-logix-accent tracking-widest text-lg mb-3" aria-label="5 out of 5 stars">★★★★★</div>
-                    <p class="text-gray-300 leading-relaxed mb-6">"Built a classroom demo gadget for my students. It's sturdy, easy to use, and the kids absolutely loved it."</p>
+                    <div class="text-logix-accent tracking-widest text-lg mb-3" aria-label="4 out of 5 stars">★★★★<span class="text-white/20">★</span></div>
+                    <p class="text-gray-300 leading-relaxed mb-6">"Built a classroom demo gadget for my students. Sturdy, easy to use, and the kids loved it. Instructions could be a little more detailed."</p>
                     <div class="flex items-center">
                         <div class="w-10 h-10 rounded-full bg-gradient-to-br from-pink-400 to-purple-600 flex items-center justify-center text-sm font-bold text-white mr-3">AD</div>
                         <div>
@@ -558,7 +565,7 @@
                     </div>
                 </article>
                 <article class="review-card flex-none w-80 sm:w-96 mr-6 p-6 rounded-2xl glass-panel border border-white/10 shadow-xl">
-                    <div class="text-logix-accent tracking-widest text-lg mb-3" aria-label="5 out of 5 stars">★★★★★</div>
+                    <div class="text-logix-accent tracking-widest text-lg mb-3" aria-label="4.5 out of 5 stars">★★★★<span class="half-star">★</span></div>
                     <p class="text-gray-300 leading-relaxed mb-6">"I wanted a bespoke desk gadget nobody else has. Logix nailed the look and the function. Worth every rupee."</p>
                     <div class="flex items-center">
                         <div class="w-10 h-10 rounded-full bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center text-sm font-bold text-white mr-3">MJ</div>
@@ -573,7 +580,7 @@
     </section>
 
     <!-- Glassmorphic Order Section -->
-    <section id="order" class="py-24 relative reveal">
+    <section id="order" class="py-24 relative reveal overflow-hidden">
         <!-- Colored Background Glow -->
         <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full -z-10 pointer-events-none" style="background: radial-gradient(circle, rgba(0,229,255,0.16) 0%, rgba(0,229,255,0.07) 40%, rgba(0,229,255,0) 70%);"></div>
 
@@ -670,7 +677,7 @@
                                         type="tel" 
                                         id="phone" 
                                         name="Phone" 
-                                        class="flex-1 w-full px-4 py-3 bg-white/5 border border-l-0 border-white/10 rounded-r-lg focus:border-logix-accent focus:bg-white/10 focus:ring-0 text-white text-base placeholder-gray-600 transition-all" 
+                                        class="flex-1 min-w-0 w-full px-4 py-3 bg-white/5 border border-l-0 border-white/10 rounded-r-lg focus:border-logix-accent focus:bg-white/10 focus:ring-0 text-white text-base placeholder-gray-600 transition-all" 
                                         placeholder="12345 67890"
                                         oninput="this.value = this.value.replace(/[^0-9]/g, '')"
                                         pattern="[0-9]{10,15}"
@@ -1301,8 +1308,7 @@
         scene.fog = new THREE.FogExp2(0x030508, 0.04);
 
         const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
-        // Change from isMobile ? 18 : 12 to 25 : 12
-        let isMobile = window.innerWidth < 768; // Make this a let, not const
+        let isMobile = window.innerWidth < 768; 
         camera.position.set(0, 2, isMobile ? 25 : 12);
         camera.lookAt(0, 0, 0);
 
@@ -1312,9 +1318,10 @@
         renderer.shadowMap.enabled = true;
         renderer.toneMapping = THREE.ACESFilmicToneMapping;
         renderer.toneMappingExposure = 1.2;
+        
         if (window.innerWidth >= 768) {
-    container3D.appendChild(renderer.domElement);
-}
+            container3D.appendChild(renderer.domElement);
+        }
 
         const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
         scene.add(ambientLight);
@@ -1365,28 +1372,28 @@
             if (boardLoaded) return;
             boardLoaded = true;
             loader.load('./esp32.glb', function(gltf) {
-            const espModel = gltf.scene;
-            
-            // Auto Scale & Center
-            const box = new THREE.Box3().setFromObject(espModel);
-            const size = box.getSize(new THREE.Vector3());
-            const maxDim = Math.max(size.x, size.y, size.z);
-            const scaleFactor = 6.0 / maxDim; 
-            espModel.scale.set(scaleFactor, scaleFactor, scaleFactor);
-            
-            const scaledBox = new THREE.Box3().setFromObject(espModel);
-            const center = scaledBox.getCenter(new THREE.Vector3());
-            espModel.position.sub(center);
+                const espModel = gltf.scene;
+                
+                // Auto Scale & Center
+                const box = new THREE.Box3().setFromObject(espModel);
+                const size = box.getSize(new THREE.Vector3());
+                const maxDim = Math.max(size.x, size.y, size.z);
+                const scaleFactor = 6.0 / maxDim; 
+                espModel.scale.set(scaleFactor, scaleFactor, scaleFactor);
+                
+                const scaledBox = new THREE.Box3().setFromObject(espModel);
+                const center = scaledBox.getCenter(new THREE.Vector3());
+                espModel.position.sub(center);
 
-            espModel.traverse((child) => {
-                if (child.isMesh) { child.castShadow = true; child.receiveShadow = true; }
+                espModel.traverse((child) => {
+                    if (child.isMesh) { child.castShadow = true; child.receiveShadow = true; }
+                });
+
+                boardGroup.add(espModel);
+            }, undefined, function(error) {
+                console.error('CRITICAL 3D ERROR:', error);
+                document.getElementById('3d-error-message').style.display = 'block';
             });
-
-            boardGroup.add(espModel);
-        }, undefined, function(error) {
-            console.error('CRITICAL 3D ERROR:', error);
-            document.getElementById('3d-error-message').style.display = 'block';
-        });
         }
         // Download the big model only when the user is about 1.5 screens away
         new IntersectionObserver((e, o) => { if (e[0].isIntersecting) { loadBoard(); o.disconnect(); } }, { rootMargin: '1500px 0px' }).observe(document.getElementById('innovation-trigger'));
@@ -1420,32 +1427,31 @@
             wireDebugGroup.add(jumperGroup);
         });
 
-       // ==========================================
+        // ==========================================
         // GSAP ANIMATIONS
         // ==========================================
         
-        masterGroup.position.y = 6; // Starts just above the center
+        masterGroup.position.y = -1; // Lowered to center in the viewport
         wireAnimGroup.position.x = 10; // Starts pushed out to the right
 
         const tl = gsap.timeline({
             scrollTrigger: { 
                 trigger: "#innovation-trigger", 
                 start: "top top", 
-                end: "+=1100", // Total scroll distance (short & snappy!)
-                pin: true,     // Locks the section in the middle of the screen!
+                end: "+=1200", 
+                pin: true,     
                 scrub: 0.5 
             }
         });
 
         // STEP 1 (First scroll): Text AND 3D Board come down together at the exact same time
-        // Keep the 3D canvas invisible until the section is pinned, then fade it in as the board drops
         tl.fromTo("#webgl-canvas", { opacity: 0 }, { opacity: 1, duration: 0.35, ease: "power1.out" }, 0);
         tl.fromTo("#innovation-text", 
             { opacity: 0, y: -100 }, 
             { opacity: 1, y: 0, duration: 1, ease: "power2.out" }, 
         0);
         tl.fromTo(masterGroup.position, 
-            { y: 6 }, 
+            { y: -1 }, 
             { y: 0, duration: 1, ease: "power2.out" }, 
         0);
         tl.to(masterGroup.rotation, 
@@ -1507,118 +1513,118 @@
     </script>
     <script>
         window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };
-      </script>
-      <script defer src="/<unique-path>/script.js"></script>
-       <!-- --- LOGIX AI CHAT WIDGET HTML --- -->
-<button id="logix-chat-btn" onclick="toggleChat()" aria-label="Brainstorm an Idea">
-    <span>💬</span>
-    <span class="chat-btn-text">Brainstorm an Idea</span>
-</button>
-<div id="logix-chat-window" style="display: none;">
-    <div class="chat-header" style="display: flex; justify-content: space-between; align-items: center;">
-        <span>Logix Guide</span>
-        <button onclick="toggleChat()" style="background: none; border: none; color: #9ca3af; font-size: 18px; cursor: pointer; padding: 0 4px;">✕</button>
-    </div>
-    <div id="chat-history">
-        <div class="bot-msg">Hi! I'm the Logix AI. Tell me about your business or a daily annoyance, and I'll pitch a custom gadget we can build for you!</div>
-    </div>
-    <div class="chat-input-area">
-        <input type="text" id="chat-input" placeholder="e.g., I manage a small gym..." onkeypress="if(event.key === 'Enter') sendMessage()" />
-        <button onclick="sendMessage()">Send</button>
-    </div>
-    <button id="fill-form-btn" onclick="sendToQuoteForm()" style="display:none;">
-        📝 Send this idea to the Quote Form
+    </script>
+    
+    <!-- --- LOGIX AI CHAT WIDGET HTML --- -->
+    <button id="logix-chat-btn" onclick="toggleChat()" aria-label="Brainstorm an Idea">
+        <span>💬</span>
+        <span class="chat-btn-text">Brainstorm an Idea</span>
     </button>
-</div>
+    <div id="logix-chat-window" style="display: none;">
+        <div class="chat-header" style="display: flex; justify-content: space-between; align-items: center;">
+            <span>Logix Guide</span>
+            <button onclick="toggleChat()" style="background: none; border: none; color: #9ca3af; font-size: 18px; cursor: pointer; padding: 0 4px;">✕</button>
+        </div>
+        <div id="chat-history">
+            <div class="bot-msg">Hi! I'm the Logix AI. Tell me about your business or a daily annoyance, and I'll pitch a custom gadget we can build for you!</div>
+        </div>
+        <div class="chat-input-area">
+            <input type="text" id="chat-input" placeholder="e.g., I manage a small gym..." onkeypress="if(event.key === 'Enter') sendMessage()" />
+            <button onclick="sendMessage()">Send</button>
+        </div>
+        <button id="fill-form-btn" onclick="sendToQuoteForm()" style="display:none;">
+            📝 Send this idea to the Quote Form
+        </button>
+    </div>
 
-<script>
-    function toggleChat() {
-        const chat = document.getElementById('logix-chat-window');
-        chat.style.display = chat.style.display === 'none' ? 'flex' : 'none';
-    }
-
-    // Hide chat button when scrolling down, show when scrolling up
-    let lastChatScrollY = window.scrollY;
-    const logixChatBtn = document.getElementById('logix-chat-btn');
-    const logixChatWindow = document.getElementById('logix-chat-window');
-
-    window.addEventListener('scroll', () => {
-        const currentScrollY = window.scrollY;
-        const isChatOpen = logixChatWindow.style.display === 'flex';
-
-        if (isChatOpen || currentScrollY < 60) {
-            logixChatBtn.classList.remove('chat-btn-hidden');
-        } else if (currentScrollY > lastChatScrollY + 8) {
-            logixChatBtn.classList.add('chat-btn-hidden');
-        } else if (currentScrollY < lastChatScrollY - 8) {
-            logixChatBtn.classList.remove('chat-btn-hidden');
+    <script>
+        function toggleChat() {
+            const chat = document.getElementById('logix-chat-window');
+            chat.style.display = chat.style.display === 'none' ? 'flex' : 'none';
         }
 
-        lastChatScrollY = currentScrollY;
-    }, { passive: true });
+        // Hide chat button when scrolling down, show when scrolling up
+        let lastChatScrollY = window.scrollY;
+        const logixChatBtn = document.getElementById('logix-chat-btn');
+        const logixChatWindow = document.getElementById('logix-chat-window');
 
-    const cleanDetails = Array.isArray(lastAiResponse) ? lastAiResponse.join('\n') : lastAiResponse;
-quoteInput.value = "From AI Brainstorming session:\n\n" + cleanDetails;
+        window.addEventListener('scroll', () => {
+            const currentScrollY = window.scrollY;
+            const isChatOpen = logixChatWindow.style.display === 'flex';
 
-    async function sendMessage() {
-        const input = document.getElementById('chat-input');
-        const message = input.value.trim();
-        if (!message) return;
-
-        const history = document.getElementById('chat-history');
-        
-        history.innerHTML += `<div class="user-msg">${message}</div>`;
-        input.value = '';
-        history.innerHTML += '<div class="bot-msg loading-pulse" id="loading">⚙️ Engineering parts list...</div>';
-        
-        // Auto-scroll to bottom
-        history.scrollTop = history.scrollHeight;
-
-        try {
-            const response = await fetch('/api/chat', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: message })
-            });
-
-            const data = await response.json();
-            document.getElementById('loading').remove();
-            
-            if (data.error || (data.reply && data.reply.includes("System Offline"))) {
-                history.innerHTML += `<div class="bot-msg" style="color:#ff3333;">System Offline: Please try again later.</div>`;
-            } else {
-                // Show the friendly message in the chat bubble
-                history.innerHTML += `<div class="bot-msg">${data.reply}</div>`;
-                
-                // Save ONLY the strict technical details for the form button
-                lastAiResponse = data.quote_details || data.reply; 
-                
-                document.getElementById('fill-form-btn').style.display = 'block';
+            if (isChatOpen || currentScrollY < 60) {
+                logixChatBtn.classList.remove('chat-btn-hidden');
+            } else if (currentScrollY > lastChatScrollY + 8) {
+                logixChatBtn.classList.add('chat-btn-hidden');
+            } else if (currentScrollY < lastChatScrollY - 8) {
+                logixChatBtn.classList.remove('chat-btn-hidden');
             }
-            
-            history.scrollTop = history.scrollHeight;
-        } catch (error) {
-            document.getElementById('loading').remove();
-            history.innerHTML += `<div class="bot-msg" style="color:#ff3333;">Error connecting to Logix AI.</div>`;
-        }
-    }
 
-    function sendToQuoteForm() {
-        // Targets the specific ID "project" from your HTML form
-        const quoteInput = document.getElementById('project'); 
-        
-        if (quoteInput) {
-            quoteInput.value = "From AI Brainstorming session:\n\n" + lastAiResponse;
-            quoteInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            toggleChat(); 
+            lastChatScrollY = currentScrollY;
+        }, { passive: true });
+
+        let lastAiResponse = "";
+
+        async function sendMessage() {
+            const input = document.getElementById('chat-input');
+            const message = input.value.trim();
+            if (!message) return;
+
+            const history = document.getElementById('chat-history');
             
-            // Highlight the form briefly to show it was updated
-            quoteInput.style.transition = 'background-color 0.5s';
-            quoteInput.style.backgroundColor = 'rgba(0, 229, 255, 0.2)';
-            setTimeout(() => quoteInput.style.backgroundColor = '', 1000);
+            history.innerHTML += `<div class="user-msg">${message}</div>`;
+            input.value = '';
+            history.innerHTML += '<div class="bot-msg loading-pulse" id="loading">⚙️ Engineering parts list...</div>';
+            
+            // Auto-scroll to bottom
+            history.scrollTop = history.scrollHeight;
+
+            try {
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: message })
+                });
+
+                const data = await response.json();
+                document.getElementById('loading').remove();
+                
+                if (data.error || (data.reply && data.reply.includes("System Offline"))) {
+                    history.innerHTML += `<div class="bot-msg" style="color:#ff3333;">System Offline: Please try again later.</div>`;
+                } else {
+                    // Show the friendly message in the chat bubble
+                    history.innerHTML += `<div class="bot-msg">${data.reply}</div>`;
+                    
+                    // Save ONLY the strict technical details for the form button
+                    lastAiResponse = data.quote_details || data.reply; 
+                    
+                    document.getElementById('fill-form-btn').style.display = 'block';
+                }
+                
+                history.scrollTop = history.scrollHeight;
+            } catch (error) {
+                document.getElementById('loading').remove();
+                history.innerHTML += `<div class="bot-msg" style="color:#ff3333;">Error connecting to Logix AI.</div>`;
+            }
         }
-    }
-</script>
+
+        function sendToQuoteForm() {
+            const quoteInput = document.getElementById('project'); 
+            
+            if (quoteInput) {
+                const cleanDetails = Array.isArray(lastAiResponse) ? lastAiResponse.join('\n') : lastAiResponse;
+                quoteInput.value = "From AI Brainstorming session:\n\n" + cleanDetails;
+                
+                quoteInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                toggleChat(); 
+                
+                // Highlight the form briefly to show it was updated
+                quoteInput.style.transition = 'background-color 0.5s';
+                quoteInput.style.backgroundColor = 'rgba(0, 229, 255, 0.2)';
+                setTimeout(() => quoteInput.style.backgroundColor = '', 1000);
+            }
+        }
+    </script>
     <script>
         // Reviews marquee: duplicate the cards once so the loop is seamless
         (function () {
