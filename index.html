@@ -131,14 +131,16 @@
         /* Mobile Overrides: Disable 3D Section & Keep Navbar Visible */
         html, body { max-width: 100%; overflow-x: clip; }
         @media (max-width: 767px) {
-            #navbar { top: 8px !important; z-index: 999 !important; }
+            /* Removed top: 8px !important so the banner stays visible */
+            #navbar { z-index: 999 !important; }
             #navbar .glass-panel {
                 background: rgba(10, 15, 28, 0.9) !important;
                 backdrop-filter: blur(16px) !important;
                 -webkit-backdrop-filter: blur(16px) !important;
                 border: 1px solid rgba(255, 255, 255, 0.15) !important;
             }
-            .innovation-section { height: auto !important; padding: 5rem 0 !important; }
+            /* Increased top padding from 5rem to 8rem to push "Our Mission" down safely */
+            .innovation-section { height: auto !important; padding: 8rem 0 5rem 0 !important; }
             .sticky-3d-container { position: relative !important; height: auto !important; }
             #webgl-canvas, #3d-error-message { display: none !important; }
             .innovation-text-layer { position: relative !important; inset: auto !important; padding: 0 1.5rem !important; pointer-events: auto !important; }
@@ -247,7 +249,7 @@
     </div>
 
     <!-- Glassmorphic Navbar -->
-    <nav class="fixed top-[20px] md:top-[32px] inset-x-0 max-w-[100vw] z-50 transition-all duration-500" id="navbar">
+    <nav class="fixed top-[48px] md:top-[44px] inset-x-0 max-w-[100vw] z-50 transition-all duration-500" id="navbar">
         <div class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-2 md:mt-4">
             <div class="glass-panel rounded-xl md:rounded-2xl flex justify-between items-center h-12 md:h-16 px-4 md:px-6">
                 <!-- Logo -->
@@ -331,7 +333,7 @@
             <div id="webgl-canvas"></div>
             
             <div class="innovation-text-layer">
-                <div class="max-w-xl w-full" id="innovation-text">
+                <div class="max-w-xl w-full pt-24" id="innovation-text">
                     <div class="inline-flex items-center gap-2 px-4 py-1.5 bg-white/5 border border-white/10 text-gray-300 rounded-full text-xs font-semibold tracking-widest uppercase mb-6 shadow-xl backdrop-blur-md">
                         <span class="w-2 h-2 rounded-full bg-logix-accent animate-pulse"></span> Our Mission
                     </div>
@@ -457,7 +459,7 @@
             
             <div class="flex-none w-80 sm:w-96 snap-center relative tilt-effect cursor-pointer group">
                 <div class="h-80 w-full rounded-2xl overflow-hidden border border-white/10 shadow-2xl relative">
-                    <img src="https://images.unsplash.com/photo-1580894742597-87bc8789db3d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Prototyping" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                    <img src="https://images.unsplash.com/photo-1517077304055-6e89abbf09b0?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Prototyping" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
                     <div class="absolute inset-0 bg-gradient-to-t from-logix-dark via-logix-dark/40 to-transparent opacity-80"></div>
                     <div class="absolute inset-0 p-8 flex flex-col justify-end transform transition-transform duration-500 translate-y-4 group-hover:translate-y-0">
                         <span class="text-logix-accent text-sm font-bold tracking-widest uppercase mb-2">Category 03</span>
@@ -487,94 +489,111 @@
         </div>
         <div class="review-marquee">
             <div class="review-track" id="review-track">
+                
+                <!-- 5 Stars (5 Solid) -->
                 <article class="review-card flex-none w-80 sm:w-96 mr-6 p-6 rounded-2xl glass-panel border border-white/10 shadow-xl">
-                    <div class="text-logix-accent tracking-widest text-lg mb-3" aria-label="4.5 out of 5 stars">★★★★<span class="half-star">★</span></div>
-                    <p class="text-gray-300 leading-relaxed mb-6">"Ordered a custom sensor board for my balcony garden. Arrived working on day one and the documentation was clearer than most store-bought kits."</p>
+                    <div class="text-logix-accent tracking-widest text-lg mb-3" aria-label="5 out of 5 stars">★★★★★</div>
+                    <p class="text-gray-300 leading-relaxed mb-6">"Logix built a custom automation rig for my coffee shop. Flawless execution. Saved me hours of manual work every single week."</p>
                     <div class="flex items-center">
                         <div class="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-400 to-blue-600 flex items-center justify-center text-sm font-bold text-white mr-3">AM</div>
                         <div>
                             <div class="text-white font-semibold text-sm">Aarav Mehta</div>
-                            <div class="text-gray-500 text-xs">Robotics hobbyist, Mumbai</div>
+                            <div class="text-gray-500 text-xs">Small Business Owner, Mumbai</div>
                         </div>
                     </div>
                 </article>
+
+                <!-- 4.5 Stars (4 Solid, 1 Half) -->
                 <article class="review-card flex-none w-80 sm:w-96 mr-6 p-6 rounded-2xl glass-panel border border-white/10 shadow-xl">
-                    <div class="text-logix-accent tracking-widest text-lg mb-3" aria-label="4 out of 5 stars">★★★★<span class="text-white/20">★</span></div>
-                    <p class="text-gray-300 leading-relaxed mb-6">"They turned my rough sketch into a real, polished gadget. Fast replies and great build quality. Would love a few more finish options."</p>
+                    <div class="text-logix-accent tracking-widest text-lg mb-3" aria-label="4.5 out of 5 stars">★★★★<span class="half-star">★</span></div>
+                    <p class="text-gray-300 leading-relaxed mb-6">"Great build quality on my custom sensor board. The documentation was solid, though shipping took an extra day. Highly recommended overall."</p>
                     <div class="flex items-center">
                         <div class="w-10 h-10 rounded-full bg-gradient-to-br from-purple-400 to-pink-500 flex items-center justify-center text-sm font-bold text-white mr-3">PN</div>
                         <div>
                             <div class="text-white font-semibold text-sm">Priya Nair</div>
-                            <div class="text-gray-500 text-xs">Product designer, Bengaluru</div>
+                            <div class="text-gray-500 text-xs">Product Designer, Bengaluru</div>
                         </div>
                     </div>
                 </article>
+
+                <!-- 3.5 Stars (3 Solid, 1 Half, 1 Empty) -->
                 <article class="review-card flex-none w-80 sm:w-96 mr-6 p-6 rounded-2xl glass-panel border border-white/10 shadow-xl">
-                    <div class="text-logix-accent tracking-widest text-lg mb-3" aria-label="5 out of 5 stars">★★★★★</div>
-                    <p class="text-gray-300 leading-relaxed mb-6">"Needed a one-off project for my final year and Logix delivered ahead of schedule. Saved me weeks of debugging. Highly recommend."</p>
+                    <div class="text-logix-accent tracking-widest text-lg mb-3" aria-label="3.5 out of 5 stars">★★★<span class="half-star">★</span><span class="text-white/20">★</span></div>
+                    <p class="text-gray-300 leading-relaxed mb-6">"Good technical work on the RFID scanner. Setup was slightly complicated for a beginner like me, but their support team helped me through it."</p>
                     <div class="flex items-center">
                         <div class="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-400 to-cyan-500 flex items-center justify-center text-sm font-bold text-white mr-3">RK</div>
                         <div>
                             <div class="text-white font-semibold text-sm">Rohan Kapoor</div>
-                            <div class="text-gray-500 text-xs">Engineering student, Delhi</div>
+                            <div class="text-gray-500 text-xs">Hobbyist, Delhi</div>
                         </div>
                     </div>
                 </article>
+
+                <!-- 4 Stars (4 Solid, 1 Empty) -->
                 <article class="review-card flex-none w-80 sm:w-96 mr-6 p-6 rounded-2xl glass-panel border border-white/10 shadow-xl">
                     <div class="text-logix-accent tracking-widest text-lg mb-3" aria-label="4 out of 5 stars">★★★★<span class="text-white/20">★</span></div>
-                    <p class="text-gray-300 leading-relaxed mb-6">"We prototyped our smart-lock idea with Logix. Great communication and honest advice. Delivery took a bit longer than hoped, but it was worth it."</p>
+                    <p class="text-gray-300 leading-relaxed mb-6">"They turned my rough sketch into a polished gadget. Fast replies. Would love a few more enclosure color options, but it works perfectly."</p>
                     <div class="flex items-center">
                         <div class="w-10 h-10 rounded-full bg-gradient-to-br from-orange-400 to-rose-500 flex items-center justify-center text-sm font-bold text-white mr-3">SI</div>
                         <div>
                             <div class="text-white font-semibold text-sm">Sneha Iyer</div>
-                            <div class="text-gray-500 text-xs">Startup founder, Chennai</div>
+                            <div class="text-gray-500 text-xs">Startup Founder, Chennai</div>
                         </div>
                     </div>
                 </article>
+
+                <!-- 5 Stars (5 Solid) -->
                 <article class="review-card flex-none w-80 sm:w-96 mr-6 p-6 rounded-2xl glass-panel border border-white/10 shadow-xl">
-                    <div class="text-logix-accent tracking-widest text-lg mb-3" aria-label="4.5 out of 5 stars">★★★★<span class="half-star">★</span></div>
-                    <p class="text-gray-300 leading-relaxed mb-6">"Third order with them now. Consistent quality every time, and they never make you feel like a small project is a nuisance."</p>
+                    <div class="text-logix-accent tracking-widest text-lg mb-3" aria-label="5 out of 5 stars">★★★★★</div>
+                    <p class="text-gray-300 leading-relaxed mb-6">"Unbelievable attention to detail! They designed a one-off macro pad for my video editing workflow. It is incredibly tactile and worth every rupee."</p>
                     <div class="flex items-center">
                         <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-indigo-600 flex items-center justify-center text-sm font-bold text-white mr-3">KM</div>
                         <div>
                             <div class="text-white font-semibold text-sm">Karan Malhotra</div>
-                            <div class="text-gray-500 text-xs">Maker, Gurugram</div>
+                            <div class="text-gray-500 text-xs">Freelancer, Gurugram</div>
                         </div>
                     </div>
                 </article>
+
+                <!-- 4.5 Stars (4 Solid, 1 Half) -->
                 <article class="review-card flex-none w-80 sm:w-96 mr-6 p-6 rounded-2xl glass-panel border border-white/10 shadow-xl">
-                    <div class="text-logix-accent tracking-widest text-lg mb-3" aria-label="4 out of 5 stars">★★★★<span class="text-white/20">★</span></div>
-                    <p class="text-gray-300 leading-relaxed mb-6">"Built a classroom demo gadget for my students. Sturdy, easy to use, and the kids loved it. Instructions could be a little more detailed."</p>
+                    <div class="text-logix-accent tracking-widest text-lg mb-3" aria-label="4.5 out of 5 stars">★★★★<span class="half-star">★</span></div>
+                    <p class="text-gray-300 leading-relaxed mb-6">"Prototyped our smart-lock idea with Logix. Honest advice, zero upselling, and an excellent soldering job inside. Very happy with the result."</p>
                     <div class="flex items-center">
                         <div class="w-10 h-10 rounded-full bg-gradient-to-br from-pink-400 to-purple-600 flex items-center justify-center text-sm font-bold text-white mr-3">AD</div>
                         <div>
                             <div class="text-white font-semibold text-sm">Ananya Das</div>
-                            <div class="text-gray-500 text-xs">Teacher, Kolkata</div>
+                            <div class="text-gray-500 text-xs">Engineer, Kolkata</div>
                         </div>
                     </div>
                 </article>
+
+                <!-- 3 Stars (3 Solid, 2 Empty) -->
                 <article class="review-card flex-none w-80 sm:w-96 mr-6 p-6 rounded-2xl glass-panel border border-white/10 shadow-xl">
-                    <div class="text-logix-accent tracking-widest text-lg mb-3" aria-label="5 out of 5 stars">★★★★★</div>
-                    <p class="text-gray-300 leading-relaxed mb-6">"Custom IR controller that just works. Clean wiring, neat enclosure, and support answered every question I had."</p>
+                    <div class="text-logix-accent tracking-widest text-lg mb-3" aria-label="3 out of 5 stars">★★★<span class="text-white/20">★★</span></div>
+                    <p class="text-gray-300 leading-relaxed mb-6">"The custom IR controller functions exactly as requested. The 3D printed case had a tiny scuff on the back from shipping, but otherwise it does the job."</p>
                     <div class="flex items-center">
                         <div class="w-10 h-10 rounded-full bg-gradient-to-br from-teal-400 to-green-500 flex items-center justify-center text-sm font-bold text-white mr-3">VS</div>
                         <div>
                             <div class="text-white font-semibold text-sm">Vikram Singh</div>
-                            <div class="text-gray-500 text-xs">Home automation fan, Jaipur</div>
+                            <div class="text-gray-500 text-xs">Home Automation Fan, Jaipur</div>
                         </div>
                     </div>
                 </article>
+
+                <!-- 4 Stars (4 Solid, 1 Empty) -->
                 <article class="review-card flex-none w-80 sm:w-96 mr-6 p-6 rounded-2xl glass-panel border border-white/10 shadow-xl">
-                    <div class="text-logix-accent tracking-widest text-lg mb-3" aria-label="4.5 out of 5 stars">★★★★<span class="half-star">★</span></div>
-                    <p class="text-gray-300 leading-relaxed mb-6">"I wanted a bespoke desk gadget nobody else has. Logix nailed the look and the function. Worth every rupee."</p>
+                    <div class="text-logix-accent tracking-widest text-lg mb-3" aria-label="4 out of 5 stars">★★★★<span class="text-white/20">★</span></div>
+                    <p class="text-gray-300 leading-relaxed mb-6">"Built a sturdy classroom demo gadget for my students. It survives being dropped, and the kids love it. Just wish the battery lasted a little longer."</p>
                     <div class="flex items-center">
                         <div class="w-10 h-10 rounded-full bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center text-sm font-bold text-white mr-3">MJ</div>
                         <div>
                             <div class="text-white font-semibold text-sm">Meera Joshi</div>
-                            <div class="text-gray-500 text-xs">Architect, Pune</div>
+                            <div class="text-gray-500 text-xs">Teacher, Pune</div>
                         </div>
                     </div>
                 </article>
+
             </div>
         </div>
     </section>
@@ -750,7 +769,7 @@
         window.addEventListener('scroll', () => {
             const scrolled = window.scrollY > 20;
             const isMobileView = window.innerWidth < 768;
-            const defaultTop = isMobileView ? 'top-[20px]' : 'top-[32px]';
+            const defaultTop = isMobileView ? 'top-[48px]' : 'top-[44px]';
             
             if (scrolled === navScrolled) return;
             navScrolled = scrolled;
@@ -1159,21 +1178,29 @@
         });
         
         class Node {
-            constructor() {
-                this.x = Math.random() * width;
-                this.y = Math.random() * height;
-                this.vx = (Math.random() - 0.5) * 1.5; 
-                this.vy = (Math.random() - 0.5) * 1.5; 
+            constructor(spawnOnEdge = false) {
+                // Dramatically slowed down base speed
+                this.vx = (Math.random() - 0.5) * 0.15; 
+                this.vy = (Math.random() - 0.5) * 0.15; 
                 this.radius = Math.random() * 2 + 1; 
                 this.color = nodeColors[Math.floor(Math.random() * nodeColors.length)];
+
+                if (spawnOnEdge) {
+                    // Spawn explicitly outside one of the 4 borders and move inward
+                    const edge = Math.floor(Math.random() * 4);
+                    if (edge === 0) { this.x = Math.random() * width; this.y = -40; this.vy = Math.abs(this.vy); } 
+                    else if (edge === 1) { this.x = width + 40; this.y = Math.random() * height; this.vx = -Math.abs(this.vx); }
+                    else if (edge === 2) { this.x = Math.random() * width; this.y = height + 40; this.vy = -Math.abs(this.vy); } 
+                    else { this.x = -40; this.y = Math.random() * height; this.vx = Math.abs(this.vx); }
+                } else {
+                    this.x = Math.random() * width;
+                    this.y = Math.random() * height;
+                }
             }
 
             update(step) {
                 this.x += this.vx * step;
                 this.y += this.vy * step;
-
-                if (this.x < 0 || this.x > width) this.vx *= -1;
-                if (this.y < 0 || this.y > height) this.vy *= -1;
 
                 if (mouseActive) {
                     const dxMouse = this.x - mouse.x;
@@ -1181,8 +1208,9 @@
                     const distMouse = Math.sqrt(dxMouse * dxMouse + dyMouse * dyMouse);
                     if (distMouse < mouseConnectionDistance && distMouse > 0.001) {
                         const force = (mouseConnectionDistance - distMouse) / mouseConnectionDistance;
-                        this.x += (dxMouse / distMouse) * force * 15 * step;
-                        this.y += (dyMouse / distMouse) * force * 15 * step;
+                        // Lowered mouse tracking push so it doesn't violently fling them
+                        this.x += (dxMouse / distMouse) * force * 3 * step;
+                        this.y += (dyMouse / distMouse) * force * 3 * step;
                     }
                 }
             }
@@ -1225,7 +1253,16 @@
 
             ctx.clearRect(0, 0, width, height);
 
-            for (let i = 0; i < nodes.length; i++) nodes[i].update(step);
+            // Delete off-screen orbs and immediately spawn new ones on the edges
+            for (let i = nodes.length - 1; i >= 0; i--) {
+                const n = nodes[i];
+                if (n.x < -60 || n.x > width + 60 || n.y < -60 || n.y > height + 60) {
+                    nodes.splice(i, 1);
+                    nodes.push(new Node(true));
+                } else {
+                    n.update(step);
+                }
+            }
 
             // Batch all lines into a few paths (one stroke per opacity level instead of one per line)
             const buckets = [];
@@ -1395,9 +1432,8 @@
                 document.getElementById('3d-error-message').style.display = 'block';
             });
         }
-        // Download the big model only when the user is about 1.5 screens away
-        new IntersectionObserver((e, o) => { if (e[0].isIntersecting) { loadBoard(); o.disconnect(); } }, { rootMargin: '1500px 0px' }).observe(document.getElementById('innovation-trigger'));
-
+        // ONLY download and parse the 3D model when the user actually scrolls down towards it
+        new IntersectionObserver((e, o) => { if (e[0].isIntersecting) { loadBoard(); o.disconnect(); } }, { rootMargin: '400px 0px' }).observe(document.getElementById('innovation-trigger'));
         // --- 4 HORIZONTAL WIRES ---
         const wireColors = [ 0x8B4513, 0xffffff, 0xff0000, 0xff8c00 ];
 
@@ -1434,41 +1470,44 @@
         masterGroup.position.y = 4; // Starts off screen higher
         wireAnimGroup.position.x = 10; // Starts pushed out to the right
 
-        const tl = gsap.timeline({
-            scrollTrigger: { 
-                trigger: "#innovation-trigger", 
-                start: "top top", 
-                end: "+=1200", 
-                pin: true,     
-                scrub: 0.5 
-            }
-        });
+        // Only run the pinning and 3D scroll timeline on Desktop!
+        if (!isMobile) {
+            const tl = gsap.timeline({
+                scrollTrigger: { 
+                    trigger: "#innovation-trigger", 
+                    start: "top top", 
+                    end: "+=1200", 
+                    pin: true,     
+                    scrub: 0.5 
+                }
+            });
 
-        // STEP 1 (First scroll): Text AND 3D Board come down together
-        tl.fromTo("#webgl-canvas", { opacity: 0 }, { opacity: 1, duration: 0.35, ease: "power1.out" }, 0);
-        tl.fromTo("#innovation-text", 
-            { opacity: 0, y: -100 }, 
-            { opacity: 1, y: 0, duration: 1, ease: "power2.out" }, 
-        0);
-        tl.fromTo(masterGroup.position, 
-            { y: 4 }, 
-            { y: -1.5, duration: 1, ease: "power2.out" }, 
-        0);
-        tl.to(masterGroup.rotation, 
-            { x: 0.2, y: -0.1, z: 0.05, duration: 1, ease: "power2.out" }, 
-        0);
-        
-        // STEP 2 (Second scroll): Wires plug horizontally into the board
-        tl.to(wireAnimGroup.position, 
-            { x: 0, duration: 1, ease: "power2.inOut" }, 
-        1.0);
-        tl.to(camera.position, 
-            { x: 1, y: 0.5, z: isMobile ? 12 : 8, duration: 1, ease: "power1.inOut" }, 
-        1.0);
-        
-        // 3. Fade Out cleanly right after plug connects
-        tl.to("#webgl-canvas", { opacity: 0, duration: 0.4 }, 2.6);
-        tl.to("#innovation-text", { opacity: 0, y: -40, duration: 0.4 }, 2.6);
+            // STEP 1 (First scroll): Text AND 3D Board come down together
+            tl.fromTo("#webgl-canvas", { opacity: 0 }, { opacity: 1, duration: 0.35, ease: "power1.out" }, 0);
+            tl.fromTo("#innovation-text", 
+                { opacity: 0, y: -100 }, 
+                { opacity: 1, y: 0, duration: 1, ease: "power2.out" }, 
+            0);
+            tl.fromTo(masterGroup.position, 
+                { y: 4 }, 
+                { y: -1.5, duration: 1, ease: "power2.out" }, 
+            0);
+            tl.to(masterGroup.rotation, 
+                { x: 0.2, y: -0.1, z: 0.05, duration: 1, ease: "power2.out" }, 
+            0);
+            
+            // STEP 2 (Second scroll): Wires plug horizontally into the board
+            tl.to(wireAnimGroup.position, 
+                { x: 0, duration: 1, ease: "power2.inOut" }, 
+            1.0);
+            tl.to(camera.position, 
+                { x: 1, y: 0.5, z: 8, duration: 1, ease: "power1.inOut" }, 
+            1.0);
+            
+            // 3. Fade Out cleanly right after plug connects
+            tl.to("#webgl-canvas", { opacity: 0, duration: 0.4 }, 2.6);
+            tl.to("#innovation-text", { opacity: 0, y: -40, duration: 0.4 }, 2.6);
+        }
 
         // Render Loop - only runs while the 3D section is on screen    
         let sceneVisible = false;
@@ -1486,10 +1525,11 @@
             requestAnimationFrame(animate3D);
         }
 
-        new IntersectionObserver((entries) => {
+       // Strictly kill the 3D GPU rendering loop when the section is not visible
+       new IntersectionObserver((entries) => {
             sceneVisible = entries[0].isIntersecting;
             if (sceneVisible) startScene();
-        }, { rootMargin: '100px 0px 100px 0px' }).observe(document.getElementById('innovation-trigger'));
+        }, { rootMargin: '0px 0px 0px 0px' }).observe(document.getElementById('innovation-trigger'));
         document.addEventListener('visibilitychange', startScene);
 
         let resize3DTimer = null;
